@@ -85,7 +85,7 @@ contract NftMarketplace is ReentrancyGuard {
         require(msg.value == item.price + PROTOCOL_FEE, "not enough funds to buy this nft");
         listersEarned[item.owner] += item.price;
         delete listedItems[_nftAddress][_tokenId];
-        IERC721(_nftAddress).safeTransferFrom(item.owner, msg.sender, _tokenId);
+        IERC721(_nftAddress).safeTransferFrom(address(this), msg.sender, _tokenId);
     }
 
     function updateListing(
@@ -101,16 +101,23 @@ contract NftMarketplace is ReentrancyGuard {
     }
 
     function withdrawProceeds() external payable getFee {
-        require(listersEarned[msg.sender] > 0, "you have nor proceeds");
+        require(listersEarned[msg.sender] > 0, "you have no proceeds");
         uint256 balance = listersEarned[msg.sender];
+        require(balance > 0, "user have no proceeds");
+        require(address(this).balance >= balance, "marketplace has no enough funds");
         listersEarned[msg.sender] = 0;
-        (bool success,) = payable(msg.sender).call{value: balance}("");
+        (bool success, ) = payable(msg.sender).call{value: balance}("");
         require(success);
     }
 
     function getListing(address _nftAddress, uint256 _tokenId) external view returns (Listing memory) {
         require(_nftAddress != address(0), "adr 0");
         return listedItems[_nftAddress][_tokenId];
+    }
+
+    function getUserProceeds(address _account) external view returns (uint256) {
+        require(_account != address(0), "adr 0");
+        return listersEarned[_account];
     }
 
     function onERC721Received(address, address, uint256, bytes calldata) external pure returns (bytes4) {

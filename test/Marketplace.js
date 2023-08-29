@@ -92,17 +92,37 @@ describe("Deploy", function () {
             })
         })
 
-        // describe("buyItem", () => {
-        //     it("should list batch items", async () => {
-        //         const {tokenContract, marketContract, nftOwner, owner, user1, user2} = await loadFixture(deploy);
-        //         await marketContract.connect(user1).listItem(tokenContract.getAddress(), 1, ethers.parseEther("0.1"), {value: ethers.parseUnits("1000", "wei")});
-        //         const nftPrice = await marketContract.getListing(tokenContract.getAddress(), 1);
-        //         const cost = nftPrice[1] + ethers.parseUnits("1000", "wei");
-        //         console.log("=>(Marketplace.js:100) cost", Number(cost));
-        //         await marketContract.connect(user2).buyItem(tokenContract.getAddress(), 1, {value: ethers.parseUnits(cost.toString(), "wei")})
-        //
-        //     })
-        // })
+        describe("buyItem", () => {
+            it("should list batch items", async () => {
+                const {tokenContract, marketContract, nftOwner, owner, user1, user2} = await loadFixture(deploy);
+                await marketContract.connect(user1).listItem(tokenContract.getAddress(), 1, ethers.parseEther("0.1"), {value: ethers.parseUnits("1000", "wei")});
+                const nftPrice = await marketContract.getListing(tokenContract.getAddress(), 1);
+                const cost = nftPrice[1] + ethers.parseUnits("1000", "wei");
+                const amount = await tokenContract.balanceOf(user2.address);
+                const sellerIncomeBefore = await marketContract.getUserProceeds(user1.address);
+                const result = await marketContract.connect(user2).buyItem(tokenContract.getAddress(), 1, {value: ethers.parseUnits(cost.toString(), "wei")});
+                const sellerIncomeAfter = await marketContract.getUserProceeds(user1.address);
+                expect(sellerIncomeAfter > sellerIncomeBefore).to.eq(true);
+                await expect(result).to.changeEtherBalance(marketContract, ethers.parseUnits(cost.toString(), "wei"));
+                await expect(result).to.changeEtherBalance(user2, -ethers.parseUnits(cost.toString(), "wei"));
+                const amount1 = await tokenContract.balanceOf(user2.address);
+                expect(amount1 > amount).to.eq(true);
+            })
+        })
+
+        describe("withdrawProceeds", () => {
+            it("should list batch items", async () => {
+                const {tokenContract, marketContract, nftOwner, owner, user1, user2} = await loadFixture(deploy);
+                await marketContract.connect(user1).listItem(tokenContract.getAddress(), 1, ethers.parseEther("0.1"), {value: ethers.parseUnits("1000", "wei")});
+                const nftPrice = await marketContract.getListing(tokenContract.getAddress(), 1);
+                const cost = nftPrice[1] + ethers.parseUnits("1000", "wei");
+                const result = await marketContract.connect(user2).buyItem(tokenContract.getAddress(), 1, {value: ethers.parseUnits(cost.toString(), "wei")});
+                const proceedsBalance = await marketContract.getUserProceeds(user1.address);
+                const proceeds = await marketContract.connect(user1).withdrawProceeds({value: ethers.parseUnits("1000", "wei")});
+                await expect(proceeds).to.changeEtherBalance(user1, proceedsBalance - ethers.parseUnits("1000", "wei"));
+                await expect(proceeds).to.changeEtherBalance(marketContract, -proceedsBalance + ethers.parseUnits("1000", "wei"));
+            })
+        })
     })
 
 });
