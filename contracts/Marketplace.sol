@@ -41,7 +41,7 @@ contract NftMarketplace is ReentrancyGuard {
     }
 
     modifier getFee() {
-        require(msg.value == PROTOCOL_FEE, "you should pay fee");
+        require(msg.value >= PROTOCOL_FEE, "you should pay fee");
         _;
     }
 
@@ -53,6 +53,7 @@ contract NftMarketplace is ReentrancyGuard {
         require(listedItems[_nftAddress][_tokenId].price == 0, "already listed");
         require(_price > 0, "_price == 0");
         listedItems[_nftAddress][_tokenId] = Listing(msg.sender, _price);
+        IERC721(_nftAddress).safeTransferFrom(msg.sender, address(this), _tokenId);
         emit ListedItem(_nftAddress, _tokenId, msg.sender, _price, block.timestamp);
     }
 
@@ -68,6 +69,7 @@ contract NftMarketplace is ReentrancyGuard {
             require(listedItems[_nftAddress][_tokenIds[i]].price == 0, "already listed");
             require(_prices[i] > 0, "price must be more than 0");
             listedItems[_nftAddress][_tokenIds[i]] = Listing(msg.sender, _prices[i]);
+            IERC721(_nftAddress).safeTransferFrom(msg.sender, address(this), _tokenIds[i]);
             emit ListedItem(_nftAddress, _tokenIds[i], msg.sender, _prices[i], block.timestamp);
         }
     }
@@ -80,7 +82,7 @@ contract NftMarketplace is ReentrancyGuard {
     function buyItem(address _nftAddress, uint256 _tokenId) external payable getFee {
         require(listedItems[_nftAddress][_tokenId].price > 0, "wasn't listed");
         Listing memory item = listedItems[_nftAddress][_tokenId];
-        require(msg.value == item.price, "not enough funds to buy this nft");
+        require(msg.value == item.price + PROTOCOL_FEE, "not enough funds to buy this nft");
         listersEarned[item.owner] += item.price;
         delete listedItems[_nftAddress][_tokenId];
         IERC721(_nftAddress).safeTransferFrom(item.owner, msg.sender, _tokenId);
@@ -90,9 +92,11 @@ contract NftMarketplace is ReentrancyGuard {
         address _nftAddress,
         uint256 _tokenId,
         uint256 new_price
-    ) external isOwner(_nftAddress, _tokenId) {
+    ) external {
         require(listedItems[_nftAddress][_tokenId].price > 0, "wasn't listed");
         require(new_price > 0, "new price = 0");
+        Listing storage listing = listedItems[_nftAddress][_tokenId];
+        require(listing.owner == msg.sender, "you are not owner of the nft");
         listedItems[_nftAddress][_tokenId].price = new_price;
     }
 
@@ -107,5 +111,9 @@ contract NftMarketplace is ReentrancyGuard {
     function getListing(address _nftAddress, uint256 _tokenId) external view returns (Listing memory) {
         require(_nftAddress != address(0), "adr 0");
         return listedItems[_nftAddress][_tokenId];
+    }
+
+    function onERC721Received(address, address, uint256, bytes calldata) external pure returns (bytes4) {
+        return IERC721Receiver.onERC721Received.selector;
     }
 }

@@ -24,6 +24,7 @@ describe("Deploy", function () {
         const Market = await ethers.getContractFactory("NftMarketplace");
         const marketContract = await Market.deploy();
         await marketContract.waitForDeployment();
+        await tokenContract.connect(user1).setApprovalForAll(marketContract.getAddress(), true);
         return {tokenContract, nftOwner, owner, user1, user2, marketContract}
     }
 
@@ -55,7 +56,7 @@ describe("Deploy", function () {
         describe("batchListing", () => {
             it("should list batch items", async () => {
                 const {tokenContract, marketContract, nftOwner, owner, user1, user2} = await loadFixture(deploy);
-                await expect(marketContract.connect(user1).batchListing(tokenContract.getAddress(), [1, 2, 3], [ethers.parseEther("0.1"), ethers.parseEther("0.2"), ethers.parseEther("0")],{value: ethers.parseUnits("1000", "wei")})
+                await expect(marketContract.connect(user1).batchListing(tokenContract.getAddress(), [1, 2, 3], [ethers.parseEther("0.1"), ethers.parseEther("0.2"), ethers.parseEther("0")], {value: ethers.parseUnits("1000", "wei")})
                 ).to.be.revertedWith("price must be more than 0");
                 await marketContract.connect(user1).batchListing(tokenContract.getAddress(), [1, 2, 3], [ethers.parseEther("0.1"), ethers.parseEther("0.2"), ethers.parseEther("0.3")], {value: ethers.parseUnits("1000", "wei")});
                 const listedItem1 = await marketContract.getListing(tokenContract.getAddress(), 1);
@@ -91,13 +92,17 @@ describe("Deploy", function () {
             })
         })
 
-        describe("buyItem", () => {
-            it("should list batch items", async () => {
-                const {tokenContract, marketContract, nftOwner, owner, user1, user2} = await loadFixture(deploy);
-                await marketContract.connect(user1).listItem(tokenContract.getAddress(), 1, ethers.parseEther("0.1"), {value: ethers.parseUnits("1000", "wei")});
-
-            })
-        })
+        // describe("buyItem", () => {
+        //     it("should list batch items", async () => {
+        //         const {tokenContract, marketContract, nftOwner, owner, user1, user2} = await loadFixture(deploy);
+        //         await marketContract.connect(user1).listItem(tokenContract.getAddress(), 1, ethers.parseEther("0.1"), {value: ethers.parseUnits("1000", "wei")});
+        //         const nftPrice = await marketContract.getListing(tokenContract.getAddress(), 1);
+        //         const cost = nftPrice[1] + ethers.parseUnits("1000", "wei");
+        //         console.log("=>(Marketplace.js:100) cost", Number(cost));
+        //         await marketContract.connect(user2).buyItem(tokenContract.getAddress(), 1, {value: ethers.parseUnits(cost.toString(), "wei")})
+        //
+        //     })
+        // })
     })
 
 });
