@@ -1,5 +1,17 @@
 const {initializeApp} = require("firebase/app");
-const {getFirestore, collection, getDocs, doc,arrayUnion,updateDoc, setDoc,arrayRemove} = require("firebase/firestore");
+const {
+    getFirestore,
+    collection,
+    getDocs,
+    doc,
+    arrayUnion,
+    updateDoc,
+    getDoc,
+    setDoc,
+    query, where,
+    arrayRemove
+} = require("firebase/firestore");
+const hash = require('object-hash');
 
 const firebaseApp = initializeApp({
     apiKey: "AIzaSyCpOEM5_RxgIyfhSncty9O7oHLpvFUbP20",
@@ -12,33 +24,47 @@ const firebaseApp = initializeApp({
 
 const db = getFirestore(firebaseApp);
 
-async function getCities(db) {
-    const citiesCol = collection(db, 'usersNfts/0xBDf761788135C7d7Aa76E6671f63462A07C53E2C/0xBDf761788135C7d7Aa76E6671f63462A07C53E2D');
-    const citySnapshot = await getDocs(citiesCol);
-    const cityList = citySnapshot.docs.map(doc => doc.data());
-    return cityList;
+async function getAccountInfo(db, collect, account) {
+    const docRef = doc(db, collect, account);
+    return await getDoc(docRef);
 }
 
-async function write(db) {
-    const data = ({contract: "0xBDf761788135C7d7Aa76E6671f63462A07C53E2D", value: [2, 6]});
-    const res = await setDoc(doc(db, "usersNfts", "0xBDf761788135C7d7Aa76E6671f63462A07C53E2R"), data);
+async function getAccountDataHash(db, collect, account) {
+    const querySnapshot = await getDocs(collection(db, collect, account, "hash"));
+    querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+    });
+}
+
+async function write(db, collect,) {
+    const data = {contract: "0xBDf761788135C7d7Aa76E6671f63462A07C53E2D", value: [2, 1]};
+    data.hash = hash(data);
+    const res = await setDoc(doc(db, collect, "new"), data);
 }
 
 async function update(db) {
-    const data = ({contract: "0xBDf761788135C7d7Aa76E6671f63462A07C53E2N", value: [2,  7]});
-    const res = await updateDoc(doc(db, "usersNfts", "0xBDf761788135C7d7Aa76E6671f63462A07C53E2R"), data);
+    const data = ({value: [2, 7], hash: "hkdhf823ufp2jfpi2pjf"});
+    const res = await updateDoc(doc(db, "usersNfts26", "hash"), data);
 }
+
 async function updateArray(db) {
     const data = ({value: 10});
     const res = await updateDoc(doc(db, "usersNfts", "0xBDf761788135C7d7Aa76E6671f63462A07C53E2R"), {value: arrayUnion(10)});
 }
+
 async function removeFromArray(db) {
     const data = ({value: 10});
     const res = await updateDoc(doc(db, "usersNfts", "0xBDf761788135C7d7Aa76E6671f63462A07C53E2R"), {value: arrayRemove(2)});
 }
 
-getCities(db).then(data => console.log(data));
-removeFromArray(db);
+async function compareHashes(db, collect, account) {
+
+}
+
+getAccountInfo(db, "usersNfts26", "new").then(data => console.log(data.data()));
+getAccountDataHash(db, "usersNfts26", "new")
+// write(db, "usersNfts26");
 
 
 // Initialize Firebase
