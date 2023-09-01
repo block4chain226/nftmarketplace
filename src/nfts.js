@@ -8,9 +8,10 @@ const Auth = Buffer.from(
 const chainId = "5";
 const walletAddress = "0x217719Ba3b94bD9F054B23E49cEd95EB1B282101";
 
-const getContractsInfo = (async (...contracts) => {
-    let query;
+ const getContractsInfo = (async (...contracts) => {
+    let query = "";
     contracts.forEach((item, index) => query += `tokenAddresses=${item}&`);
+
     try {
         const {data} = await axios.get(
             `https://nft.api.infura.io/networks/${chainId}/accounts/${walletAddress}/assets/nfts?${query}`,
@@ -20,10 +21,36 @@ const getContractsInfo = (async (...contracts) => {
                 },
             },
         );
-        console.log(":rocket: ~ file: index.js:20 ~ result:", data.assets.filter(item => item.tokenId < 73889243904509611474688124910479078512340374220987978095039703176887973404038));
+        // console.log(":rocket: ~ file: index.js:20 ~ result:", data.assets);
+        return data;
+
 
     } catch (error) {
         console.log(":rocket: ~ file: index.js:17 ~ error:", error);
     }
 });
-getContractsInfo("0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b", "0xad46d0235b2698aad03803443b7a50383bdefc1c");
+
+const compare = (arr1, arr2) => {
+    let newArr, temp, temp1;
+    temp = array1.filter(function (el) {
+        return arr2.indexOf(el) === -1;
+    });
+    temp1 = array2.filter(function (el) {
+        return arr1.indexOf(el) === -1;
+    });
+    newArr = temp.concat(temp1);
+    return !newArr.length;
+}
+// const y = getContractsInfo("0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b");
+// let tokenIds = [];
+// tokenIds = y.then(data => data.assets.map(item => {
+//     console.log("dfdfg", item.tokenId)
+// }))
+// tokenIds.then(data=>console.log(data));
+let tokenIds = getContractsInfo("0xf5de760f2e916647fd766b4ad9e85ff943ce3a2b").then(data => Object.entries(data.assets).map((item, index) => {
+    return item[1].tokenId;
+}))
+tokenIds.then((data=>console.log(data)))
+
+
+
