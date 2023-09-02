@@ -25,104 +25,49 @@ const firebaseApp = initializeApp({
 
 const db = getFirestore(firebaseApp);
 
-//
-export async function getAccountInfo(db, collect, account, contract) {
-    const docRef = doc(db, collect, account, contract, "ids");
+async function getTokenInfoFromUsers(db, collect, account, contract, arg) {
+    const docRef = doc(db, collect, account, "Contracts", contract, "tokenIds", arg);
     return await getDoc(docRef);
 }
 
-//
-// // async function getAccountDataHash(db, collect, account) {
-// //     const querySnapshot = await getDocs(collection(db, collect, account, usersNfts));
-// //     querySnapshot.forEach((doc) => {
-// //         // doc.data() is never undefined for query doc snapshots
-// //         console.log(doc.id, " => ", doc.data());
-// //     });
-// // }
-//
-// async function write(db, account, contract) {
-//     // const data = {hash: "0xBDf761788135C7d", value: [2, 1]};
-//     // // data.hash = hash(data);
-//     // const res = await setDoc(doc(db, collect, contract), data);
-//
-//     await setDoc(doc(db, "userInfo", account), {
-//         contract: {
-//             name: contract,
-//             ids: [1, 4, 65],
-//             hash: "gnejrgnk4043390",
-//         }
-//
-//     });
-//
-// }
-//
-// async function coL(db) {
-//     const collectionRef = collection(db, 'UserInfo');
-//     const docRef = doc(collectionRef, "account");
-//     const collectionRef1 = collection(docRef, 'Contract');
-//     const secondDocRef2 = doc(collectionRef1, "ids");
-//     const secondDocRef3 = doc(collectionRef1, "hash");
-//     await setDoc(secondDocRef2, {ids: [1, 2, 3]})
-//     await setDoc(secondDocRef3, {hash: "dfjhbveurfvg34763847fhu"})
-//
-// }
-//
-// // coL(db);
-//
+async function getCollectionInfoFromUsers(db, collect, account, contract, arg) {
+    const querySnapshot = await getDocs(collection(db, collect, account, "Contracts", contract, "tokenIds"));
+    querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+    });
+}
 
-async function createdNestedCol() {
-    db.collection("newCollect").doc("address").collection("contract").add({
-        ids: [1, 2, 3],
-        hash: "hfjsbf74yt39hfpi4hfi"
+async function updateTokenInfoInUsers(db, collect, account, contract, tokenId, data) {
+    await updateDoc(doc(db, collect, account, "Contracts", contract, "tokenIds", tokenId), data);
+}
+
+async function writeTokenInfoInUsers(db, account, contract, params) {
+    const Usercollection = collection(db, 'Users');
+    const accountDoc = doc(Usercollection, account);
+    const contractCollection = collection(accountDoc, 'Contracts');
+    const contractDoc = doc(contractCollection, contract);
+    const tokenIdsCollection = collection(contractDoc, "tokenIds");
+    const token = doc(tokenIdsCollection, params?.tokenId);
+    await setDoc(token, {
+        data: {
+            tokenId: params?.tokenId,
+            contract: params?.contract,
+        }
     })
 }
 
+const res = getCollectionInfoFromUsers(db, "Users", "0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5F");
 
-// createdNestedCol();
-// async function writeCollect(db, account, contract) {
-//     // const data = {hash: "0xBDf761788135C7d", value: [2, 1]};
-//     // // data.hash = hash(data);
-//     // const res = await setDoc(doc(db, collect, contract), data);
-//
-//     await setDoc(doc(db, "userInfo", account), {
-//         contract: {
-//             name: contract,
-//             ids: [1, 4, 65],
-//             hash: "gnejrgnk4043390",
-//         }
-//
-//     });
-//
-// }
-//
-// async function update(db, collect, account) {
-//     const data = ({
-//
-//         // name: "gnejrgnk4043395555555550",
-//         fam: "12"
-//
-//     });
-//     const res = await updateDoc(doc(db, "userInfo", "0xBDf761788135C7d7Aa76E6671f63462A07C53E2C"), data);
-// }
-//
-// async function updateArray(db) {
-//     const data = ({value: 10});
-//     const res = await updateDoc(doc(db, "usersNfts", "0xBDf761788135C7d7Aa76E6671f63462A07C53E2R"), {value: arrayUnion(10)});
-// }
-//
-// async function removeFromArray(db) {
-//     const data = ({value: 10});
-//     const res = await updateDoc(doc(db, "usersNfts", "0xBDf761788135C7d7Aa76E6671f63462A07C53E2R"), {value: arrayRemove(2)});
-// }
-//
-// async function compareHashes(db, collect, account) {
-//
-// }
+// writeTokenInfoInUsers(db, "0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5F",
+//     {tokenId: "3", contract: "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5F"});
 
-// update(db, "userInfo", "0xBDf761788135C7d7Aa76E6671f63462A07C53E2C");
-// getAccountDataHash(db, "usersNfts26", "new")
-// write(db,  "0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5Z");
+// updateTokenInfoInUsers(db, "Users", "0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5F", "2", {
+//     data: {
+//         tokenId: "2",
+//         contract: "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5F"
+//     }
+// })
 
-
-// Initialize Firebase
-// const app = initializeApp(firebaseConfig);
+// const res = getTokenInfoFromUsers(db, "Users", "0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5F", "1");
+// res.then(data => console.log(data.data()));
