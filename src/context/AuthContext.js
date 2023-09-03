@@ -15,20 +15,6 @@ export const AuthProvider = ({children}) => {
     const [web3auth, setWeb3auth] = useState(null);
     const [provider, setProvider] = useState(null);
 
-    // async function requestAccount() {
-    //     try {
-    //         if (window.ethereum) {
-    //             const acc = await window.ethereum.request({
-    //                 method: "eth_requestAccounts",
-    //             });
-    //             setAccounts(acc[0]);
-    //             console.log(acc[0])
-    //         }
-    //     } catch (err) {
-    //         console.error(err);
-    //     }
-    // }
-
     const requestAccount = async () => {
         try {
             const web3auth = new Web3Auth({
