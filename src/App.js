@@ -23,7 +23,8 @@ import useFetch from "./hooks/useFetchCollection";
 import {Web3Auth} from "@web3auth/modal";
 import {CHAIN_NAMESPACES, SafeEventEmitterProvider} from "@web3auth/base";
 import {ethers} from "ethers";
-import UseFetchCollection from "./hooks/useFetchCollection";
+import useFetchCollection from "./hooks/useFetchCollection";
+
 
 const clientId = "BH88U3rXLQxiX_zAoGEHCUaP0wBlxC82MB3yvnqDU-EDeKBoH60Y8Il-O8tMzQTGI5fSYTbwGtJEGb-O-NO_OI4";
 
@@ -31,7 +32,7 @@ function App() {
     const [web3auth, setWeb3auth] = useState(null);
     const [provider, setProvider] = useState(null);
 
-    const [data] = UseFetchCollection(5, "0x217719Ba3b94bD9F054B23E49cEd95EB1B282101", ["0xe51a6d8a8766e0a95e1db5f856f0e5352afaa87e"], "getContractsTokenIds");
+    const [data] = useFetchCollection(5, "0x217719Ba3b94bD9F054B23E49cEd95EB1B282101", ["0xe51a6d8a8766e0a95e1db5f856f0e5352afaa87e"], "getContractsTokenIds");
 
     useEffect(() => {
         console.log(data)
