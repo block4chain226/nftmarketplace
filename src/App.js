@@ -34,19 +34,22 @@ function App() {
     const [provider, setProvider] = useState(null);
 
     const [data] = useFetchCollection(5, "0x217719Ba3b94bD9F054B23E49cEd95EB1B282101", ["0xe51a6d8a8766e0a95e1db5f856f0e5352afaa87e"], "getContractsInfo");
-    useUserWriteToDb("0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5F", {
-        account: "0xBDf761788135C7d7Aa76E6671f63462A07C53E2C",
-        contract: "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5F",
-        tokenId: "3",
-        name: "Apes",
-        image: "http://pic",
-        description: "lalalala",
-        type: "ERC721",
-        category: "Games",
-    }, "writeTokenToCollectionDB");
+    // useUserWriteToDb("0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5F", {
+    //     account: "0xBDf761788135C7d7Aa76E6671f63462A07C53E2C",
+    //     contract: "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5F",
+    //     tokenId: "3",
+    //     name: "Apes",
+    //     image: "http://pic",
+    //     description: "lalalala",
+    //     type: "ERC721",
+    //     category: "Games",
+    // }, "writeTokenToCollectionDB");
+
+    // useUserWriteToDb("0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5Z", undefined, "writeUserContractDB");
+    useUserWriteToDb("0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5V", undefined, "updateUserContractDB");
 
     useEffect(() => {
-        console.log(data)
+        // console.log(data)
     }, [data])
 
     useEffect(() => {

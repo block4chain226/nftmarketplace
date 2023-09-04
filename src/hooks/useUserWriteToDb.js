@@ -59,9 +59,41 @@ const useUserWriteToDb = (account, contract, params, func) => {
         }
     }
 
+    const writeUserContractDB = async (account, contract) => {
+        console.log("here");
+        if (db && account && contract !== undefined || "") {
+            const usersContracts = collection(db, 'UsersContracts');
+            const accountDoc = doc(usersContracts, account);
+            try {
+                await setDoc(accountDoc, {contracts: [contract]}, {merge: true});
+            } catch (error) {
+                console.log(":rocket: ~ file: index.js:17 ~ error:", error);
+            }
+        } else {
+            console.log("you did not enter info");
+        }
+    }
+
+    const updateUserContractDB = async (account, contract) => {
+        if (db && account && contract !== undefined || "") {
+            const usersContracts = collection(db, 'UsersContracts');
+            const accountDoc = doc(usersContracts, account);
+            try {
+                await updateDoc(accountDoc, {contracts: arrayUnion(contract)});
+            } catch (error) {
+                console.log(":rocket: ~ file: index.js:17 ~ error:", error);
+            }
+        } else {
+            console.log("you did not enter info");
+        }
+    }
+
     useEffect(() => {
-        if (func === "writeTokenToCollectionDB") writeTokenToCollectionDB(account, contract, params);
-    }, [func])
+
+        // if (func === "writeTokenToCollectionDB") writeTokenToCollectionDB(account, contract, params);
+        if (func === "writeUserContractDB" && params === undefined || "") writeUserContractDB(account, contract);
+        if (func === "updateUserContractDB" && params === undefined || "") updateUserContractDB(account, contract);
+    }, [func, account, contract])
 };
 
 export default useUserWriteToDb;
