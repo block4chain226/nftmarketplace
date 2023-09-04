@@ -25,6 +25,7 @@ import {CHAIN_NAMESPACES, SafeEventEmitterProvider} from "@web3auth/base";
 import {ethers} from "ethers";
 import useFetchCollection from "./hooks/useFetchCollection";
 import useUserWriteToDb from "./hooks/useUserWriteToDb";
+import useFetchFromDb from "./hooks/useFetchFromDb";
 
 
 const clientId = "BH88U3rXLQxiX_zAoGEHCUaP0wBlxC82MB3yvnqDU-EDeKBoH60Y8Il-O8tMzQTGI5fSYTbwGtJEGb-O-NO_OI4";
@@ -33,7 +34,7 @@ function App() {
     const [web3auth, setWeb3auth] = useState(null);
     const [provider, setProvider] = useState(null);
 
-    const [data] = useFetchCollection(5, "0x217719Ba3b94bD9F054B23E49cEd95EB1B282101", ["0xe51a6d8a8766e0a95e1db5f856f0e5352afaa87e"], "getContractsInfo");
+    // const [data] = useFetchCollection(5, "0x217719Ba3b94bD9F054B23E49cEd95EB1B282101", ["0xe51a6d8a8766e0a95e1db5f856f0e5352afaa87e"], "getContractsInfo");
     // useUserWriteToDb("0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5F", {
     //     account: "0xBDf761788135C7d7Aa76E6671f63462A07C53E2C",
     //     contract: "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5F",
@@ -46,11 +47,13 @@ function App() {
     // }, "writeTokenToCollectionDB");
 
     // useUserWriteToDb("0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5Z", undefined, "writeUserContractDB");
-    useUserWriteToDb("0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5V", undefined, "updateUserContractDB");
+    const [allUserContracts] = useFetchFromDb("0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "getContractsListFromDB")
+  const res =  useUserWriteToDb("0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5K", undefined, allUserContracts, "writeOrUpdateUserContractDB");
+    // const [res] = useFetchFromDb("0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "getContractsListFromDB");
 
     useEffect(() => {
-        // console.log(data)
-    }, [data])
+
+    }, [res])
 
     useEffect(() => {
         $(".menu-trigger").on("click", function () {

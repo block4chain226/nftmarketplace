@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import {db} from "../firebase/initializeDB";
+import useFetchFromDb from "./useFetchFromDb";
 
 const {
     getFirestore,
@@ -25,7 +26,7 @@ const {
 //     appId: "1:967979187767:web:3191732b97e188c57dc9b2"
 // });
 
-const useUserWriteToDb = (account, contract, params, func) => {
+const useUserWriteToDb = (account, contract, params, useFetchFromDb, func) => {
     //0xBDf761788135C7d7Aa76E6671f63462A07C53E2C
     //0xA4bf42Fa9384D605e259b68dC17777fBF9885E5F
     const writeTokenToCollectionDB = async (account, contract, params) => {
@@ -60,7 +61,6 @@ const useUserWriteToDb = (account, contract, params, func) => {
     }
 
     const writeUserContractDB = async (account, contract) => {
-        console.log("here");
         if (db && account && contract !== undefined || "") {
             const usersContracts = collection(db, 'UsersContracts');
             const accountDoc = doc(usersContracts, account);
@@ -88,12 +88,26 @@ const useUserWriteToDb = (account, contract, params, func) => {
         }
     }
 
+    const writeOrUpdateUserContractDB = async (account, contract, useFetchFromDb) => {
+        if ([useFetchFromDb].length > 0) {
+            updateUserContractDB(account, contract);
+        }
+        if (useFetchFromDb === undefined) {
+            console.log("!length", useFetchFromDb)
+            console.log("=>(useUserWriteToDb.js:98) useFetchFromDb", useFetchFromDb);
+            writeUserContractDB(account, contract);
+        }
+    }
     useEffect(() => {
+        console.log("useWrite: ", useFetchFromDb);
+    })
 
+    useEffect(() => {
         // if (func === "writeTokenToCollectionDB") writeTokenToCollectionDB(account, contract, params);
-        if (func === "writeUserContractDB" && params === undefined || "") writeUserContractDB(account, contract);
-        if (func === "updateUserContractDB" && params === undefined || "") updateUserContractDB(account, contract);
-    }, [func, account, contract])
+        if (func === "writeUserContractDB" && params && useFetchFromDb === undefined || "") writeUserContractDB(account, contract);
+        if (func === "updateUserContractDB" && params && useFetchFromDb === undefined || "") updateUserContractDB(account, contract);
+        if ((func === "writeOrUpdateUserContractDB" && params === undefined || "")) writeOrUpdateUserContractDB(account, contract, useFetchFromDb);
+    }, [func, useFetchFromDb, account, contract])
 };
 
 export default useUserWriteToDb;
