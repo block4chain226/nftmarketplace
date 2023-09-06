@@ -4,7 +4,7 @@ import {useState} from "react";
 import {Web3Auth} from "@web3auth/modal";
 import {CHAIN_NAMESPACES, SafeEventEmitterProvider} from "@web3auth/base";
 import {ethers} from "ethers";
-
+import erc20Abi from "../abis/erc20.json";
 
 const AuthContext = createContext();
 
@@ -37,7 +37,13 @@ export const AuthProvider = ({children}) => {
 
             if (web3auth.provider) {
                 const web3authProvider = await web3auth.connect();
-                setProvider(web3auth.provider);
+                const provider = new ethers.BrowserProvider(web3authProvider);
+                const signer = await provider.getSigner();
+
+                setAccounts(signer);
+                setProvider(provider);
+                // console.log("=>(AuthContext.js:43) signer", signer);
+               // await contractExists(erc20Abi, signer, "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5F");
             }
 
         } catch (error) {

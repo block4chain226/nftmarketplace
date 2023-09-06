@@ -1,6 +1,7 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {db} from "../firebase/initializeDB";
 import useFetchFromDb from "./useFetchFromDb";
+import useBlockchain from "./useBlockchain";
 
 const {
     getFirestore,
@@ -26,52 +27,70 @@ const {
 //     appId: "1:967979187767:web:3191732b97e188c57dc9b2"
 // });
 
-const useUserWriteToDb = (account, contract, params, useFetchFromDb, func) => {
+const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, func) => {
     //0xBDf761788135C7d7Aa76E6671f63462A07C53E2C
     //0xA4bf42Fa9384D605e259b68dC17777fBF9885E5F
-    const writeTokenToCollectionDB = async (account, contract, params) => {
-        if (db && account && contract && params !== undefined || "") {
-            const usercollection = collection(db, 'Users');
-            const accountDoc = doc(usercollection, account);
-            const contractCollection = collection(accountDoc, 'Contracts');
-            const contractDoc = doc(contractCollection, contract);
-            const tokenIdsCollection = collection(contractDoc, "tokenIds");
-            const token = doc(tokenIdsCollection, params?.tokenId);
-            try {
-                await setDoc(token, {
-                    data: {
-                        account: params?.account,
-                        contract: params?.contract,
-                        tokenId: params?.tokenId,
-                        name: params?.name,
-                        image: params?.image,
-                        description: params?.description,
-                        type: params?.type,
-                        category: params?.category
-                    }
-                })
-                console.log("success");
-            } catch (error) {
-                console.log(":rocket: ~ file: index.js:17 ~ error:", error);
-            }
 
-        } else {
-            console.log("you did not enter info");
+    const [success, setSuccess] = useState("");
+    const [error, setError] = useState({error: ""});
+    const [loading, setLoading] = useState({loading: false});
+
+    const {contractExists} = useBlockchain(contract);
+
+    const writeUserContractDB = async (account, contract, category) => {
+        setLoading(true);
+        const exist = await contractExists(contract);
+        if (!exist) {
+            setError("Contract doesn't exist");
         }
+        if (exist) {
+            if (db && account && contract !== undefined || "") {
+                const usersContracts = collection(db, 'UsersContracts');
+                const accountDoc = doc(usersContracts, account.address);
+                const contractCollection = collection(accountDoc, "Contracts");
+                const contractDoc = doc(contractCollection, contract);
+                try {
+                    await setDoc(contractDoc,
+                        {
+                            contract: contract,
+                            category: category,
+                            filter: "all"
+                        }
+                        , {merge: true});
+                } catch (error) {
+                    setError({error: "Error on saving contract"});
+                    console.log(":rocket: ~ file: index.js:17 ~ error:", error);
+                }
+            } else {
+                setError("You didn't enter contract address");
+            }
+        }
+        setLoading({loading: true});
+        setSuccess("success");
     }
-
-    const writeUserContractDB = async (account, contract) => {
-        if (db && account && contract !== undefined || "") {
-            const usersContracts = collection(db, 'UsersContracts');
-            const accountDoc = doc(usersContracts, account);
-            try {
-                await setDoc(accountDoc, {contracts: [contract]}, {merge: true});
-            } catch (error) {
-                console.log(":rocket: ~ file: index.js:17 ~ error:", error);
-            }
-        } else {
-            console.log("you did not enter info");
+    //TODO write updateUserKeys and modificate writeOrUpdateUsersKeysDB
+    const writeUserKeys = async (account, contract) => {
+        setLoading(true);
+        const exist = await contractExists(contract);
+        if (!exist) {
+            setError("Contract doesn't exist");
         }
+        if (exist) {
+            if (db && account && contract !== undefined || "") {
+                try {
+                    await setDoc(doc(db, "UsersKeys", account.address), {
+                        contracts: [contract]
+                    });
+                } catch (error) {
+                    setError({error: "Error on saving contract"});
+                    console.log(":rocket: ~ file: index.js:17 ~ error:", error);
+                }
+            } else {
+                setError("You didn't enter contract address");
+            }
+        }
+        setLoading({loading: true});
+        setSuccess("success");
     }
 
     const updateUserContractDB = async (account, contract) => {
@@ -87,7 +106,7 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, func) => {
             console.log("you did not enter info");
         }
     }
-
+    //TODO need to rewrite DB logic for array with object
     const writeOrUpdateUserContractDB = async (account, contract, useFetchFromDb) => {
         if ([useFetchFromDb].length > 0) {
             updateUserContractDB(account, contract);
@@ -98,16 +117,14 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, func) => {
             writeUserContractDB(account, contract);
         }
     }
-    useEffect(() => {
-        console.log("useWrite: ", useFetchFromDb);
-    })
 
-    useEffect(() => {
-        // if (func === "writeTokenToCollectionDB") writeTokenToCollectionDB(account, contract, params);
-        if (func === "writeUserContractDB" && params && useFetchFromDb === undefined || "") writeUserContractDB(account, contract);
-        if (func === "updateUserContractDB" && params && useFetchFromDb === undefined || "") updateUserContractDB(account, contract);
-        if ((func === "writeOrUpdateUserContractDB" && params === undefined || "")) writeOrUpdateUserContractDB(account, contract, useFetchFromDb);
-    }, [func, useFetchFromDb, account, contract])
+    return {
+        writeUserContractDB: writeUserContractDB,
+        writeUserKeys: writeUserKeys,
+        success: success,
+        loading: loading,
+        error: error
+    }
 };
 
 export default useUserWriteToDb;

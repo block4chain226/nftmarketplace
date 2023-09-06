@@ -2,77 +2,62 @@ import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import {log} from "@web3auth/base";
 import {type} from "os-browserify/browser";
+import useFetchFromDb from "./useFetchFromDb";
 
 const UseFetchCollection = (chainId, wallet, contracts, func) => {
 
-    const [userInfo, setUserInfo] = useState();
-    const [contractTokenIds, setContractTokenIds] = useState([]);
+    const [success, setSuccess] = useState(false);
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const Auth = Buffer.from("0278c444aed04da78423cf802ca2efd1" + ":" + "332fc3c1362a4778a18c75365d7366fe").toString("base64");
 
-    const getContractsInfo = (async (chainId, wallet, ...contracts) => {
-        //5
-        //0x217719Ba3b94bD9F054B23E49cEd95EB1B282101
-        let query = "";
-        contracts.forEach((item) => query += `tokenAddresses=${item}&`);
-        let data = {};
-        try {
-            data = await axios.get(
-                `https://nft.api.infura.io/networks/${chainId}/accounts/${wallet}/assets/nfts?${query}`,
-                {
-                    headers: {
-                        Authorization: `Basic ${Auth}`,
-                    },
-                },
-            );
+    const {getUserContractListWithCategories} = useFetchFromDb();
 
-        } catch (error) {
-            console.log(":rocket: ~ file: index.js:17 ~ error:", error);
-        }
-        setUserInfo(data);
-    });
+    //TODO getAllContractTokensOfUser should be called by outlet function which  pass here  wallet and contract with category
+    const getAllContractsTokensOfUser = async (chainId, wallet) => {
+        if (wallet !== "" || undefined && chainId !== "" || undefined) {
+            setLoading(true);
+            const allUserContractsWithCategories = await getUserContractListWithCategories(wallet.address);
+            console.log("=>(useFetchCollection.js:62) allUserContracts", allUserContractsWithCategories);
+            let query = "";
 
-    const getContractsTokenIds = (async (chainId, wallet, ...contracts) => {
-        let query = "";
-        contracts.forEach((item) => query += `tokenAddresses=${item}&`);
-        let data = {};
-        try {
-            data = await axios.get(
-                `https://nft.api.infura.io/networks/${chainId}/accounts/${wallet}/assets/nfts?${query}`,
-                {
-                    headers: {
-                        Authorization: `Basic ${Auth}`,
+            allUserContractsWithCategories.forEach((item) => query += `tokenAddresses=${item.contract}&`);
+            console.log("=>(useFetchCollection.js:63) query", query);
+            let data = [];
+            try {
+                data = await axios.get(
+                    `https://nft.api.infura.io/networks/${chainId}/accounts/${wallet.address}/assets/nfts?${query}`,
+                    {
+                        headers: {
+                            Authorization: `Basic ${Auth}`,
+                        },
                     },
-                },
-            );
-        } catch (error) {
-            console.log(":rocket: ~ file: index.js:17 ~ error:", error);
-        }
-        const tokenIds = [];
-        data.data.assets.forEach((item) => {
-            for (let obj in item) {
-                if (obj === "tokenId") {
-                    tokenIds.push(item[obj]);
-                }
+                );
+                const assets = data.data.assets;
+                console.log("=>(useFetchCollection.js:79) assets", data);
+                // add category to assets
+                const assetsWithCategory = assets.map((item, index) => {
+                    const obj = {...item};
+                    obj.category = allUserContractsWithCategories[index].category;
+                    return obj;
+                })
+                console.log("=>(useFetchCollection.js:85) assetsWithCategory", assetsWithCategory);
+                return assetsWithCategory;
+            } catch (error) {
+                setError("Error on fetching contract");
+                console.log(":rocket: ~ file: index.js:17 ~ error:", error);
             }
-        });
-        setContractTokenIds(tokenIds);
-    })
+        } else {
+            console.log("no account");
+        }
+    }
 
-
-    // useEffect(() => {
-    //     getContractsInfo(chainId, wallet, contracts);
-    // }, [])
-
-    useEffect(() => {
-        if (func === "getContractsInfo") getContractsInfo(chainId, wallet, contracts);
-        if (func === "getContractsTokenIds") getContractsTokenIds(chainId, wallet, contracts);
-    }, [func])
-
-    if (userInfo) {
-        return [userInfo];
-    } else if (contractTokenIds) {
-        return [contractTokenIds]
+    return {
+        getAllContractsTokensOfUser: getAllContractsTokensOfUser,
+        loading: loading,
+        success: success,
+        error: error
     }
 
 };

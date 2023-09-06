@@ -18,6 +18,7 @@ import NftLiveBidding from './pages/NftLiveBidding'
 import Ranking from './pages/Ranking'
 import LoginPage from "./Components/InnerPages/LoginPage"
 import authContext, {AuthProvider} from "./context/AuthContext";
+
 import useFetch from "./hooks/useFetchCollection";
 
 import {Web3Auth} from "@web3auth/modal";
@@ -47,13 +48,12 @@ function App() {
     // }, "writeTokenToCollectionDB");
 
     // useUserWriteToDb("0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5Z", undefined, "writeUserContractDB");
-    const [allUserContracts] = useFetchFromDb("0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "getContractsListFromDB")
-  const res =  useUserWriteToDb("0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5K", undefined, allUserContracts, "writeOrUpdateUserContractDB");
+    // const [allUserContracts] = useFetchFromDb("0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "getContractsListFromDB")
+    // const res = useUserWriteToDb("0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5O", undefined, "", "Films", "writeUserContractDB");
+    // const res = useFetchCollection("5", "0xBDf761788135C7d7Aa76E6671f63462bA07C53E2C", "", "getContractsInfo");
     // const [res] = useFetchFromDb("0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "getContractsListFromDB");
 
-    useEffect(() => {
 
-    }, [res])
 
     useEffect(() => {
         $(".menu-trigger").on("click", function () {
