@@ -37,7 +37,8 @@ const UseFetchCollection = (chainId, wallet, contracts, func) => {
                     const res = _.isEqual(obj.contract.toUpperCase(), allUserContractsWithCategories[1].contract.toUpperCase());
                     allUserContractsWithCategories.forEach(item => {
                         if (_.isEqual(item.contract.toUpperCase(), obj.contract.toUpperCase())) {
-                            obj.category = item.category
+                            obj.category = item.category;
+                            obj.collectionName = item.collectionName;
                         }
                     });
                     return obj;

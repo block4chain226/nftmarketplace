@@ -1,7 +1,4 @@
-import React, {useContext, useState} from 'react';
-import useFetchCollection from "../../../hooks/useFetchCollection";
-import AuthContext from "../../../context/AuthContext";
-import useUserWriteToDb from "../../../hooks/useUserWriteToDb";
+import React from 'react';
 
 const NftItem = () => {
     return (
