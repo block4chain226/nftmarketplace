@@ -21,7 +21,7 @@ const UseFetchFromDb = (account, func) => {
     const [data, setData] = useState([]);
 
     const getContractsListFromDB = async (account) => {
-        const docRef = doc(db, "UsersContracts", "0xBDf761788135C7d7Aa76E6671f63462A07C53E2C", "Contracts", "category");
+        const docRef = doc(db, "UsersContracts", account, "Contracts", "category");
         const data = await getDoc(docRef);
         const dat = data.data();
 
@@ -46,10 +46,11 @@ const UseFetchFromDb = (account, func) => {
     }
     //TODO
     const getUserContractsList = async (account) => {
-        const q = query(collection(db, "UsersContracts", account, "Contracts"), where("filter", "==", "all"));
+        const q = query(collection(db, "UsersContracts", account.address, "Contracts"), where("filter", "==", "all"));
         const querySnapshot = await getDocs(q);
         let contracts = [];
         querySnapshot.forEach((doc) => {
+            console.log(doc.id)
             contracts.push(doc.id);
         });
         return contracts;
@@ -61,7 +62,6 @@ const UseFetchFromDb = (account, func) => {
         const querySnapshot = await getDocs(q);
         let contractListWithCategories = [];
         querySnapshot.forEach((doc) => {
-            console.log(doc.data())
             contractListWithCategories.push(doc.data());
         });
         contractListWithCategories = contractListWithCategories.map(item => {

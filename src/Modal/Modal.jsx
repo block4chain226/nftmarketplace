@@ -2,18 +2,22 @@ import React, {useContext, useState} from 'react';
 import cl from "./Modal.module.css";
 import useFetchCollection from "../hooks/useFetchCollection";
 import AuthContext from "../context/AuthContext";
+import useUserWriteToDb from "../hooks/useUserWriteToDb";
 
 const Modal = (props) => {
 
     const [contract, setContract] = useState("");
+    const [collectionName, setCollectionName] = useState("");
     const [category, setCategory] = useState("Art");
     const {accounts} = useContext(AuthContext);
 
     const {getAllContractsTokensOfUser} = useFetchCollection();
+    const {writeUserContractDB, writeCollectionNameDB} = useUserWriteToDb();
 
-    const test = async (contract, e) => {
+    const test = async (contract, category, name, e) => {
         e.preventDefault();
-        getAllContractsTokensOfUser("5", accounts);
+        // getAllContractsTokensOfUser("5", accounts);
+        writeUserContractDB(accounts, contract, category, name);
     }
     return (
         <>
@@ -29,10 +33,15 @@ const Modal = (props) => {
                             justifyContent: "space-between",
                             alignItems: "center"
                         }}>
-                            <span>{category && category}</span>
                             <input onChange={(e) => {
+                                setContract(e.target.value)
                             }} style={{padding: "5px", margin: "10px", borderRadius: "10px", width: "50%"}}/>
-                            <select onChange={(e) => {
+                            <input onChange={(e) => {
+                                setCollectionName(e.target.value)
+                            }} style={{
+                                padding: "5px", margin: "10px", borderRadius: "10px", width: "50%"
+                            }}/>
+                            < select onChange={(e) => {
                                 setCategory(e.target.value)
                             }} defaultValue={category}>
                                 <option value="Art">Art</option>
@@ -40,7 +49,7 @@ const Modal = (props) => {
                                 <option value="Photography">Photography</option>
                             </select>
                             <button onClick={(e) => {
-                                test(contract, e)
+                                test(contract, category, collectionName, e)
                             }} style={{padding: "5px", margin: "10px", borderRadius: "10px", width: "30%"}}>Upload
                                 collection
                             </button>

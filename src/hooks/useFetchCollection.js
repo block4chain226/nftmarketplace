@@ -1,8 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import axios from "axios";
-import {log} from "@web3auth/base";
-import {type} from "os-browserify/browser";
 import useFetchFromDb from "./useFetchFromDb";
+import _ from "lodash";
 
 const UseFetchCollection = (chainId, wallet, contracts, func) => {
 
@@ -14,18 +13,12 @@ const UseFetchCollection = (chainId, wallet, contracts, func) => {
 
     const {getUserContractListWithCategories} = useFetchFromDb();
 
-    //TODO getAllContractTokensOfUser should be called by outlet function which  pass here  wallet and contract with category
     const getAllContractsTokensOfUser = async (chainId, wallet) => {
-
         if (wallet !== "" || undefined && chainId !== "" || undefined) {
-            console.log("=>(useFetchCollection.js:19) wallet", wallet);
             setLoading(true);
             const allUserContractsWithCategories = await getUserContractListWithCategories(wallet.address);
-            console.log("=>(useFetchCollection.js:62) allUserContracts", allUserContractsWithCategories);
             let query = "";
-
             allUserContractsWithCategories.forEach((item) => query += `tokenAddresses=${item.contract}&`);
-            console.log("=>(useFetchCollection.js:63) query", query);
             let data = [];
             try {
                 data = await axios.get(
@@ -37,15 +30,18 @@ const UseFetchCollection = (chainId, wallet, contracts, func) => {
                     },
                 );
                 const assets = data.data.assets;
-                console.log("=>(useFetchCollection.js:79) assets", data);
+                const sortedAssets = assets.sort((a, b) => a.contract > b.contract ? 1 : -1)
                 // add category to assets
-                const assetsWithCategory = assets.map((item, index) => {
+                return sortedAssets.map((item, index) => {
                     const obj = {...item};
-                    obj.category = allUserContractsWithCategories[index].category;
+                    const res = _.isEqual(obj.contract.toUpperCase(), allUserContractsWithCategories[1].contract.toUpperCase());
+                    allUserContractsWithCategories.forEach(item => {
+                        if (_.isEqual(item.contract.toUpperCase(), obj.contract.toUpperCase())) {
+                            obj.category = item.category
+                        }
+                    });
                     return obj;
-                })
-                console.log("=>(useFetchCollection.js:85) assetsWithCategory", assetsWithCategory);
-                return assetsWithCategory;
+                });
             } catch (error) {
                 setError("Error on fetching contract");
                 console.log(":rocket: ~ file: index.js:17 ~ error:", error);
