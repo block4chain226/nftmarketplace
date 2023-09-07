@@ -8,7 +8,7 @@ const hre = require("hardhat");
 
 async function main() {
 
-  const apeNft = await hre.ethers.deployContract("ApesNft");
+  const apeNft = await hre.ethers.deployContract("ApeNft");
   await apeNft.waitForDeployment();
 
   console.log(
