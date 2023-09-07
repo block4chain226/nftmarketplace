@@ -7,18 +7,22 @@
 const hre = require("hardhat");
 
 async function main() {
+    const apeNft = await hre.ethers.deployContract("ApesNft");
+    await apeNft.waitForDeployment();
+    const pixelNft = await hre.ethers.deployContract("PixelNft");
+    await pixelNft.waitForDeployment();
 
-  const apeNft = await hre.ethers.deployContract("ApesNft");
-  await apeNft.waitForDeployment();
-
-  console.log(
-   `ApeNft deployed to ${await apeNft.getAddress()}`
-  );
+    console.log(
+        `ApeNft deployed to ${await apeNft.getAddress()}`
+    );
+    console.log(
+        `PixelNft deployed to ${await pixelNft.getAddress()}`
+    );
 }
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
+    console.error(error);
+    process.exitCode = 1;
 });
