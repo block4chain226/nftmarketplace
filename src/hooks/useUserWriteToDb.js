@@ -17,16 +17,6 @@ const {
     arrayRemove
 } = require("firebase/firestore");
 
-
-// const firebaseApp = initializeApp({
-//     apiKey: "AIzaSyCpOEM5_RxgIyfhSncty9O7oHLpvFUbP20",
-//     authDomain: "nftmarketplace226.firebaseapp.com",
-//     projectId: "nftmarketplace226",
-//     storageBucket: "nftmarketplace226.appspot.com",
-//     messagingSenderId: "967979187767",
-//     appId: "1:967979187767:web:3191732b97e188c57dc9b2"
-// });
-
 const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, func) => {
     //0xBDf761788135C7d7Aa76E6671f63462A07C53E2C
     //0xA4bf42Fa9384D605e259b68dC17777fBF9885E5F
@@ -37,7 +27,7 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
 
     const {contractExists} = useBlockchain(contract);
 
-    const writeUserContractDB = async (account, contract, category) => {
+    const writeUserContractDB = async (account, contract, category, collectionName) => {
         setLoading(true);
         const exist = await contractExists(contract);
         if (!exist) {
@@ -64,23 +54,30 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
             } else {
                 setError("You didn't enter contract address");
             }
+            writeCollectionNameDB(account, contract, collectionName);
         }
         setLoading({loading: true});
         setSuccess("success");
     }
-    //TODO write updateUserKeys and modificate writeOrUpdateUsersKeysDB
-    const writeUserKeys = async (account, contract) => {
+
+    const writeCollectionNameDB = async (account, contract, name) => {
         setLoading(true);
         const exist = await contractExists(contract);
         if (!exist) {
             setError("Contract doesn't exist");
         }
         if (exist) {
-            if (db && account && contract !== undefined || "") {
+            if (db && account && name !== undefined || "") {
+                const usersContracts = collection(db, 'UsersCollectionsNames');
+                const accountDoc = doc(usersContracts, account.address);
+                const contractCollection = collection(accountDoc, "Contracts");
+                const contractDoc = doc(contractCollection, contract);
                 try {
-                    await setDoc(doc(db, "UsersKeys", account.address), {
-                        contracts: [contract]
-                    });
+                    await setDoc(contractDoc,
+                        {
+                            name: name
+                        }
+                        , {merge: true});
                 } catch (error) {
                     setError({error: "Error on saving contract"});
                     console.log(":rocket: ~ file: index.js:17 ~ error:", error);
@@ -120,7 +117,7 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
 
     return {
         writeUserContractDB: writeUserContractDB,
-        writeUserKeys: writeUserKeys,
+        writeCollectionNameDB: writeCollectionNameDB,
         success: success,
         loading: loading,
         error: error

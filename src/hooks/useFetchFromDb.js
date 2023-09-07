@@ -56,7 +56,7 @@ const UseFetchFromDb = (account, func) => {
         return contracts;
     }
 
-    //TODO 1 need to create array [{contract, category],...,...}
+    //TODO
     const getUserContractListWithCategories = async (account) => {
         const q = query(collection(db, "UsersContracts", account, "Contracts"), where("filter", "==", "all"));
         const querySnapshot = await getDocs(q);
