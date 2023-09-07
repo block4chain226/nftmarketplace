@@ -16,7 +16,9 @@ const UseFetchCollection = (chainId, wallet, contracts, func) => {
 
     //TODO getAllContractTokensOfUser should be called by outlet function which  pass here  wallet and contract with category
     const getAllContractsTokensOfUser = async (chainId, wallet) => {
+
         if (wallet !== "" || undefined && chainId !== "" || undefined) {
+            console.log("=>(useFetchCollection.js:19) wallet", wallet);
             setLoading(true);
             const allUserContractsWithCategories = await getUserContractListWithCategories(wallet.address);
             console.log("=>(useFetchCollection.js:62) allUserContracts", allUserContractsWithCategories);
