@@ -3,9 +3,7 @@ import React from 'react';
 const Collection = ({item, setContract}) => {
 
     return (
-        <div className="col-xl-4 col-md-6 col-sm-6"
-             onClick={(e) => setContract(e.currentTarget.getAttribute("data-contract"))}
-             data-category={item.category} data-contract={item.contract}>
+        <div className="col-xl-4 col-md-6 col-sm-6">
 
             <div className="top-collection-item">
                 <div className="collection-item-top">
@@ -27,15 +25,17 @@ const Collection = ({item, setContract}) => {
                         </li>
                     </ul>
                 </div>
-                <div className="collection-item-thumb">
-                    <a href="/market-single"><img src={item.metadata.image} key={item.metadata.tokenId}
-                                                  alt=""/></a>
+                <div className="collection-item-thumb" style={{cursor: "pointer"}}>
+                    <img src={item.metadata.image}
+                         onClick={(e) => setContract(e.currentTarget.getAttribute("data-contract"))}
+                         data-category={item.category} data-contract={item.contract}
+                         alt=""/>
                 </div>
                 <div className="collection-item-content">
                     <h5 className="title"><a href="/market-single">{item.collectionName}</a> <span
                         className="price">5.4 ETH</span></h5>
                 </div>
-                <div className="collection-item-bottom" key={item.metadata.tokenId}>
+                <div className="collection-item-bottom">
                     <ul>
                         <li key={item.metadata.tokenId} className="bid"><a href="/market-single"
                                                                            className="btn">place a bid</a>

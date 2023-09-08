@@ -2,7 +2,7 @@ import React from 'react';
 
 const NftItem = ({item}) => {
     return (
-        <div className="col-xl-4 col-md-6 col-sm-6" data-category={item.category} data-contract={item.contract}>
+        <div className="col-xl-4 col-md-6 col-sm-6">
             <div className="top-collection-item">
                 <div className="collection-item-top">
                     <ul>
@@ -24,11 +24,12 @@ const NftItem = ({item}) => {
                     </ul>
                 </div>
                 <div className="collection-item-thumb">
-                    <a href="/market-single"><img src={item.metadata.image} key={item.metadata.tokenId}
+                    <a href="/market-single"><img src={item.metadata.image}
+                                                  data-category={item.category} data-contract={item.contract}
                                                   alt=""/></a>
                 </div>
                 <div className="collection-item-content">
-                    <h5 className="title"><a href="/market-single">{item.collectionName}</a> <span
+                    <h5 className="title"><a href="/market-single">{item.metadata.name}</a> <span
                         className="price">5.4 ETH</span></h5>
                 </div>
                 <div className="collection-item-bottom" key={item.metadata.tokenId}>
