@@ -34,7 +34,42 @@ const UseFetchCollection = (chainId, wallet, contracts, func) => {
                 // add category to assets
                 return sortedAssets.map((item, index) => {
                     const obj = {...item};
-                    const res = _.isEqual(obj.contract.toUpperCase(), allUserContractsWithCategories[1].contract.toUpperCase());
+                    allUserContractsWithCategories.forEach(item => {
+                        if (_.isEqual(item.contract.toUpperCase(), obj.contract.toUpperCase())) {
+                            obj.category = item.category;
+                            obj.collectionName = item.collectionName;
+                        }
+                    });
+                    return obj;
+                });
+            } catch (error) {
+                setError("Error on fetching contract");
+                console.log(":rocket: ~ file: index.js:17 ~ error:", error);
+            }
+        } else {
+            console.log("no account");
+        }
+    }
+
+    const getAllSingleContractTokensOfUser = async (chainId, wallet, contract) => {
+        if (wallet !== "" || undefined && chainId !== "" || undefined) {
+            setLoading(true);
+            const allUserContractsWithCategories = await getUserContractListWithCategories(wallet.address);
+            let data = [];
+            try {
+                data = await axios.get(
+                    `https://nft.api.infura.io/networks/${chainId}/accounts/${wallet.address}/assets/nfts?tokenAddresses=${contract}`,
+                    {
+                        headers: {
+                            Authorization: `Basic ${Auth}`,
+                        },
+                    },
+                );
+                const assets = data.data.assets;
+                const sortedAssets = assets.sort((a, b) => a.contract > b.contract ? 1 : -1)
+                // add category to assets
+                return sortedAssets.map((item, index) => {
+                    const obj = {...item};
                     allUserContractsWithCategories.forEach(item => {
                         if (_.isEqual(item.contract.toUpperCase(), obj.contract.toUpperCase())) {
                             obj.category = item.category;
@@ -54,6 +89,7 @@ const UseFetchCollection = (chainId, wallet, contracts, func) => {
 
     return {
         getAllContractsTokensOfUser: getAllContractsTokensOfUser,
+        getAllSingleContractTokensOfUser: getAllSingleContractTokensOfUser,
         loading: loading,
         success: success,
         error: error

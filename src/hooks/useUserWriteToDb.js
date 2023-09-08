@@ -44,6 +44,7 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
                         {
                             contract: contract,
                             category: category,
+                            collectionName: collectionName,
                             filter: "all"
                         }
                         , {merge: true});
@@ -54,7 +55,6 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
             } else {
                 setError("You didn't enter contract address");
             }
-            writeCollectionNameDB(account, contract, collectionName);
         }
         setLoading({loading: true});
         setSuccess("success");

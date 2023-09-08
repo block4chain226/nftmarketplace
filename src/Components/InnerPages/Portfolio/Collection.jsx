@@ -1,9 +1,12 @@
 import React from 'react';
 
-const Collection = ({item}) => {
+const Collection = ({item, setContract}) => {
+
     return (
-        <div className="col-xl-4 col-md-6 col-sm-6">
-            data-category={item.category}>
+        <div className="col-xl-4 col-md-6 col-sm-6"
+             onClick={(e) => setContract(e.currentTarget.getAttribute("data-contract"))}
+             data-category={item.category} data-contract={item.contract}>
+
             <div className="top-collection-item">
                 <div className="collection-item-top">
                     <ul>
