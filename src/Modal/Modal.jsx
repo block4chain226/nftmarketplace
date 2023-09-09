@@ -12,7 +12,7 @@ const Modal = (props) => {
     const {accounts} = useContext(AuthContext);
 
     const {getAllContractsTokensOfUser} = useFetchCollection();
-    const {writeUserContractDB, writeCollectionNameDB} = useUserWriteToDb();
+    const {writeUserContractDB} = useUserWriteToDb();
 
     const test = async (contract, category, name, e) => {
         e.preventDefault();

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {db} from "../firebase/initializeDB";
 
 const {
@@ -35,12 +35,17 @@ const UseFetchFromDb = (account, func) => {
         const querySnapshot = await getDocs(q);
         let contracts = [];
         querySnapshot.forEach((doc) => {
-            console.log(doc.id)
             contracts.push(doc.id);
         });
         return contracts;
     }
-
+    //TODO
+    const getUserContractListedTokens = async (account, contract) => {
+        const docRef = doc(db, "UsersListedTokens", account.address, "Contracts", contract);
+        const allContractListedTokens = await getDoc(docRef);
+        console.log("=>(useFetchFromDb.js:46) allContractListedTokens", allContractListedTokens.data());
+        return allContractListedTokens.data();
+    }
     //TODO
     const getUserContractListWithCategories = async (account) => {
         const q = query(collection(db, "UsersContracts", account, "Contracts"), where("filter", "==", "all"));
@@ -60,6 +65,7 @@ const UseFetchFromDb = (account, func) => {
     return {
         contractExistsInDB: contractExistsInDB,
         getUserContractsList: getUserContractsList,
+        getUserContractListedTokens: getUserContractListedTokens,
         getUserContractListWithCategories: getUserContractListWithCategories
     };
 };

@@ -20,18 +20,12 @@ const Portfolio = () => {
     const {getAllListings} = useFetchFromDb();
 
 
-    async function get() {
-        const r = await getAllListings();
-        console.log("=>(Portfolio.jsx:25) r", r);
-    }
-
     const getCollectionsData = async (account) => {
         if (account !== undefined || "") {
             const contracts = await getUserContractsList(accounts);
             const allTokens = await getAllContractsTokensOfUser("5", account);
             let lastContract;
             for (let i = 0; i < allTokens.length; i++) {
-                console.log(allTokens[i])
                 if (i === 0) {
                     lastContract = allTokens[i].contract;
                     continue;
@@ -44,28 +38,21 @@ const Portfolio = () => {
                     lastContract = allTokens[i].contract
                 }
             }
-            console.log("getCollectionsData")
             setCollections(allTokens);
         }
 
     }
 
     const getCollectionItemsData = async (account, contract) => {
-
         if (account !== undefined || "" && contract !== undefined || "") {
             const nfts = await getAllSingleContractTokensOfUser("5", account, contract);
             console.log("=>(Portfolio.jsx:50) nfts", nfts);
+            //TODO check if listing exists
             if (nfts.length) {
-                console.log("getCollectionItemsData");
                 setNftItems(nfts);
             }
         }
     }
-
-    const log = async (e) => {
-        console.log(e.currentTarget.getAttribute("data-contract"));
-    }
-
 
     useEffect(() => {
         if (accounts !== null) getCollectionsData(accounts);
@@ -81,15 +68,13 @@ const Portfolio = () => {
 
     return (
         <div className="row justify-content-center">
-            <button onClick={get}>get</button>
             {
-
                 !showItems ? collections.map((item) => (
-                            <Collection item={item} key={item.metadata.name} log={log} setContract={setContract}/>
+                            <Collection item={item} key={item.collectionName} setContract={setContract}/>
                         )
                     ) :
                     nftItems.map((item) => (
-                        <NftItem item={item}/>
+                        <NftItem item={item} key={item.metadata.name}/>
                     ))
             }
         </div>

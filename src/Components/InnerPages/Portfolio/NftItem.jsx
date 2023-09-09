@@ -1,7 +1,46 @@
-import React from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Link} from "react-router-dom";
+import useUserWriteToDb from "../../../hooks/useUserWriteToDb";
+import AuthContext from "../../../context/AuthContext";
+import useFetchFromDb from "../../../hooks/useFetchFromDb";
 
 const NftItem = ({item}) => {
+
+    const {accounts} = useContext(AuthContext);
+
+    const {writeUsersListedTokensDB, deleteUserListedTokenDB, writeOrUpdateUserListedTokensDB} = useUserWriteToDb();
+    const {getUserContractListedTokens} = useFetchFromDb();
+
+    const [listed, setListed] = useState(false);
+
+    const listToken = async (e) => {
+        e.preventDefault();
+        writeOrUpdateUserListedTokensDB(accounts, item.contract, item.tokenId, getUserContractListedTokens);
+        setTimeout(() => {
+            setListed(true);
+        }, 300)
+    }
+
+    const isListed = async () => {
+        const allContractListedTokens = await getUserContractListedTokens(accounts, item.contract);
+        if (allContractListedTokens) {
+            console.log("=>(NftItem.jsx:24) allContractListedTokens", allContractListedTokens?.tokens);
+            const result = allContractListedTokens.tokens.includes(item?.tokenId);
+            setListed(result);
+        }
+    }
+
+    const unListToken = async (e) => {
+        e.preventDefault();
+        deleteUserListedTokenDB(accounts, item.contract, item.tokenId);
+        setTimeout(() => {
+            setListed(false);
+        }, 300)
+    }
+
+    useEffect(() => {
+        isListed();
+    }, [listed]);
     return (
         <div className="col-xl-4 col-md-6 col-sm-6">
             <div className="top-collection-item">
@@ -27,22 +66,24 @@ const NftItem = ({item}) => {
 
                 <div className="collection-item-thumb">
                     <Link to={`/market-single/${item.tokenId}`} state={item}><img src={item.metadata.image}
-                                                                                 key={item.tokenId}
-                                                                     data-category={item.category}
-                                                                     data-contract={item.contract}
-
-                                                                     alt=""/></Link>
+                                                                                  key={item.tokenId}
+                                                                                  data-category={item.category}
+                                                                                  data-contract={item.contract}
+                                                                                  alt=""/></Link>
                 </div>
                 <div className="collection-item-content">
                     <h5 className="title"><a href="/market-single">{item.metadata.name}</a> <span
                         className="price">5.4 ETH</span></h5>
                 </div>
-                <div className="collection-item-bottom" key={item.metadata.tokenId}>
+                <div className="collection-item-bottom">
                     <ul>
-                        <li key={item.metadata.tokenId} className="bid"><a href="/market-single"
-                                                                           className="btn">place a bid</a>
-                        </li>
-                        <li key={item.metadata.tokenId} className="wishlist"><a
+                        {!listed ? <li className="bid"><a href="/market-single" onClick={(e) => listToken(e)}
+                                                          className="btn">List</a></li> :
+                            <li className="bid"><a href="/market-single" onClick={(e) => unListToken(e)}
+                                                   className="btn">Unlist</a></li>
+                        }
+
+                        <li className="wishlist"><a
                             href="/login-register">59</a></li>
                     </ul>
                 </div>
