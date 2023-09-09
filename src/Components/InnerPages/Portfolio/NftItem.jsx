@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from "react-router-dom";
 
 const NftItem = ({item}) => {
     return (
@@ -23,10 +24,14 @@ const NftItem = ({item}) => {
                         </li>
                     </ul>
                 </div>
+
                 <div className="collection-item-thumb">
-                    <a href="/market-single"><img src={item.metadata.image}
-                                                  data-category={item.category} data-contract={item.contract}
-                                                  alt=""/></a>
+                    <Link to={`/market-single/${item.tokenId}`} state={item}><img src={item.metadata.image}
+                                                                                 key={item.tokenId}
+                                                                     data-category={item.category}
+                                                                     data-contract={item.contract}
+
+                                                                     alt=""/></Link>
                 </div>
                 <div className="collection-item-content">
                     <h5 className="title"><a href="/market-single">{item.metadata.name}</a> <span

@@ -17,6 +17,13 @@ const Portfolio = () => {
     const {getAllContractsTokensOfUser, getAllSingleContractTokensOfUser} = useFetchCollection();
     const {writeUserContractDB} = useUserWriteToDb();
     const {getUserContractsList} = useFetchFromDb();
+    const {getAllListings} = useFetchFromDb();
+
+
+    async function get() {
+        const r = await getAllListings();
+        console.log("=>(Portfolio.jsx:25) r", r);
+    }
 
     const getCollectionsData = async (account) => {
         if (account !== undefined || "") {
@@ -74,7 +81,9 @@ const Portfolio = () => {
 
     return (
         <div className="row justify-content-center">
+            <button onClick={get}>get</button>
             {
+
                 !showItems ? collections.map((item) => (
                             <Collection item={item} key={item.metadata.name} log={log} setContract={setContract}/>
                         )

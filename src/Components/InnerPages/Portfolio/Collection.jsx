@@ -37,10 +37,10 @@ const Collection = ({item, setContract}) => {
                 </div>
                 <div className="collection-item-bottom">
                     <ul>
-                        <li key={item.metadata.tokenId} className="bid"><a href="/market-single"
+                        <li key={item.metadata.name} className="bid"><a href="/market-single"
                                                                            className="btn">place a bid</a>
                         </li>
-                        <li key={item.metadata.tokenId} className="wishlist"><a
+                        <li key={item.metadata.name} className="wishlist"><a
                             href="/login-register">59</a></li>
                     </ul>
                 </div>
