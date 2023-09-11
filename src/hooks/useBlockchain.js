@@ -1,8 +1,12 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext} from 'react';
 import AuthContext from "../context/AuthContext";
+import {ethers} from "ethers";
+import adminWalletContext from "../context/AdminWalletContext";
 
-const UseBlockchain = (contractAddress) => {
+
+const UseBlockchain = () => {
     const {provider} = useContext(AuthContext);
+    const {adminWallet} = useContext(adminWalletContext);
 
     const contractExists = async (contractAddress) => {
         try {
@@ -13,8 +17,17 @@ const UseBlockchain = (contractAddress) => {
         }
     }
 
+    const signTransaction = async (account, contract, price, tokenId) => {
+        const messageHash = ethers.solidityPackedKeccak256(
+            ["address", "address", "uint", "uint"],
+            [account, contract, price, tokenId]);
+        const messageHashBinary = ethers.getBytes(messageHash);
+        return await adminWallet.signMessage(messageHashBinary);
+    }
+
     return {
-        contractExists: contractExists
+        contractExists: contractExists,
+        signTransaction: signTransaction
     }
 };
 

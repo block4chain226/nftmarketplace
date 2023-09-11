@@ -8,23 +8,25 @@ const NftItem = ({item}) => {
 
     const {accounts} = useContext(AuthContext);
 
-    const {writeUsersListedTokensDB, deleteUserListedTokenDB, writeOrUpdateUserListedTokensDB} = useUserWriteToDb();
-    const {getUserContractListedTokens} = useFetchFromDb();
+    const {listTokenDB, unListTokenDB, deleteUserListedTokenDB, writeOrUpdateUserListedTokensDB} = useUserWriteToDb();
+    const {getUserContractListedTokens, getHash} = useFetchFromDb();
 
     const [listed, setListed] = useState(false);
 
     const listToken = async (e) => {
         e.preventDefault();
-        writeOrUpdateUserListedTokensDB(accounts, item.contract, item.tokenId, getUserContractListedTokens);
+        let listingBtn = document.getElementById("listBtn".concat(item.tokenId));
+        await writeOrUpdateUserListedTokensDB(accounts, item.contract, item.tokenId, getUserContractListedTokens, e.target.getAttribute("listingId"));
+        await listTokenDB(accounts, item.contract, 300000, item.tokenId);
         setTimeout(() => {
             setListed(true);
-        }, 300)
+        }, 500)
     }
 
     const isListed = async () => {
         const allContractListedTokens = await getUserContractListedTokens(accounts, item.contract);
+        setListingAttribute();
         if (allContractListedTokens) {
-            console.log("=>(NftItem.jsx:24) allContractListedTokens", allContractListedTokens?.tokens);
             const result = allContractListedTokens.tokens.includes(item?.tokenId);
             setListed(result);
         }
@@ -32,15 +34,30 @@ const NftItem = ({item}) => {
 
     const unListToken = async (e) => {
         e.preventDefault();
-        deleteUserListedTokenDB(accounts, item.contract, item.tokenId);
+        const listingId = document.getElementById("listBtn".concat(item.tokenId)).getAttribute("listingId");
+        console.log("=>(NftItem.jsx:38) listingId", listingId);
+        await deleteUserListedTokenDB(accounts, item.contract, item.tokenId);
+        await unListTokenDB(listingId);
         setTimeout(() => {
             setListed(false);
-        }, 300)
+        }, 500)
+
+    }
+
+    const setListingAttribute = async () => {
+        let listingBtn = document.getElementById("listBtn".concat(item.tokenId));
+        console.log("=>(NftItem.jsx:49) listingBtn", listingBtn);
+        const atr = (accounts.address).concat(item.contract, item.tokenId)
+        console.log("=>(NftItem.jsx:51) atr", atr);
+        listingBtn.setAttribute("listingId", atr);
+        console.log("atribute", listingBtn.getAttribute("listingId"));
     }
 
     useEffect(() => {
         isListed();
+        getHash();
     }, [listed]);
+
     return (
         <div className="col-xl-4 col-md-6 col-sm-6">
             <div className="top-collection-item">
@@ -75,13 +92,15 @@ const NftItem = ({item}) => {
                     <h5 className="title"><a href="/market-single">{item.metadata.name}</a> <span
                         className="price">5.4 ETH</span></h5>
                 </div>
-                <div className="collection-item-bottom">
+                <div className="collection-item-bottom" id={"listBtn".concat(item.tokenId)}>
                     <ul>
-                        {!listed ? <li className="bid"><a href="/market-single" onClick={(e) => listToken(e)}
-                                                          className="btn">List</a></li> :
+                        {!listed ?
+                            <li className="bid"><a href="/market-single" onClick={(e) => listToken(e)}
+                                                   className="btn">List</a></li> :
                             <li className="bid"><a href="/market-single" onClick={(e) => unListToken(e)}
                                                    className="btn">Unlist</a></li>
                         }
+                        {/*<button onClick={inster}>check</button>*/}
 
                         <li className="wishlist"><a
                             href="/login-register">59</a></li>

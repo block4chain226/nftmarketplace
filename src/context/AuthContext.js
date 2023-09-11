@@ -30,22 +30,15 @@ export const AuthProvider = ({children}) => {
                     tickerName: "Ethereum",
                 }
             });
-
             setWeb3auth(web3auth);
-
             await web3auth.initModal();
-
             if (web3auth.provider) {
                 const web3authProvider = await web3auth.connect();
                 const provider = new ethers.BrowserProvider(web3authProvider);
                 const signer = await provider.getSigner();
-
                 setAccounts(signer);
                 setProvider(provider);
-                // console.log("=>(AuthContext.js:43) signer", signer);
-               // await contractExists(erc20Abi, signer, "0xA4bf42Fa9384D605e259b68dC17777fBF9885E5F");
             }
-
         } catch (error) {
             console.error(error);
         }

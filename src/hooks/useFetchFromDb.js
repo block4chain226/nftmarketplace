@@ -22,7 +22,6 @@ const UseFetchFromDb = (account, func) => {
 
     //TODO
     const contractExistsInDB = async (account, contract) => {
-        console.log("contract: ", contract);
         const q = query(collection(db, "UsersContracts", account, "Contracts"), where("contract", "==", contract));
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
@@ -40,10 +39,21 @@ const UseFetchFromDb = (account, func) => {
         return contracts;
     }
     //TODO
+    const getHash = async () => {
+        const q = query(collection(db, "UsersListings"), where("0xBDf761788135C7d7Aa76E6671f63462A07C53E2C0xFF2.contract"
+            , "==",
+            "0xFF"));
+        const querySnapshot = await getDocs(q);
+        let contracts = [];
+        querySnapshot.forEach((doc) => {
+            console.log("getHash", doc.id, "=>", doc.data());
+        });
+        return contracts;
+    }
+    //TODO
     const getUserContractListedTokens = async (account, contract) => {
         const docRef = doc(db, "UsersListedTokens", account.address, "Contracts", contract);
         const allContractListedTokens = await getDoc(docRef);
-        console.log("=>(useFetchFromDb.js:46) allContractListedTokens", allContractListedTokens.data());
         return allContractListedTokens.data();
     }
     //TODO
@@ -66,7 +76,8 @@ const UseFetchFromDb = (account, func) => {
         contractExistsInDB: contractExistsInDB,
         getUserContractsList: getUserContractsList,
         getUserContractListedTokens: getUserContractListedTokens,
-        getUserContractListWithCategories: getUserContractListWithCategories
+        getUserContractListWithCategories: getUserContractListWithCategories,
+        getHash: getHash
     };
 };
 

@@ -18,6 +18,7 @@ import NftLiveBidding from './pages/NftLiveBidding'
 import Ranking from './pages/Ranking'
 import LoginPage from "./Components/InnerPages/LoginPage"
 import {AuthProvider} from "./context/AuthContext";
+import {AdminWalletProvider} from "./context/AdminWalletContext";
 
 
 const clientId = "BH88U3rXLQxiX_zAoGEHCUaP0wBlxC82MB3yvnqDU-EDeKBoH60Y8Il-O8tMzQTGI5fSYTbwGtJEGb-O-NO_OI4";
@@ -37,28 +38,28 @@ function App() {
     return (
         <div className="App">
             <AuthProvider>
-                <Routes>
-                    <Route path="/" element={<Home/>}/>
-                    <Route path="/nft-marketplace" element={<Explore/>}/>
-                    <Route path="/collections" element={<Collections/>}/>
-                    <Route path="/blog" element={<Blog/>}/>
-
-                    <Route path="/blog-details" element={<BlogDetails/>}/>
-                    <Route path="/activity" element={<Activity/>}/>
-                    <Route path="/ranking" element={<Ranking/>}/>
-                    <Route path="/login-register" element={<LoginRegister/>}/>
-                    <Route path="/author-profile" element={<AuthorProfile/>}/>
-                    <Route path="/create-item" element={<CreateItem/>}/>
-                    <Route path="/category" element={<Category/>}/>
-                    <Route path="/creators" element={<Creators/>}/>
-                    <Route path="/author-profile" element={<AuthorProfile/>}/>
-                    <Route path="/author-profile/:tokenId" element={<MarketSingle/>}/>
-                    {/*<Route path="/market-single" element={<MarketSingle/>}/>*/}
-                    <Route path="/market-single/:tokenId" element={<MarketSingle/>}/>
-                    <Route path="/nft-live-bidding" element={<NftLiveBidding/>}/>
-                    <Route path="/connect-wallets" element={<LoginPage/>}/>
-
-                </Routes>
+                <AdminWalletProvider>
+                    <Routes>
+                        <Route path="/" element={<Home/>}/>
+                        <Route path="/nft-marketplace" element={<Explore/>}/>
+                        <Route path="/collections" element={<Collections/>}/>
+                        <Route path="/blog" element={<Blog/>}/>
+                        <Route path="/blog-details" element={<BlogDetails/>}/>
+                        <Route path="/activity" element={<Activity/>}/>
+                        <Route path="/ranking" element={<Ranking/>}/>
+                        <Route path="/login-register" element={<LoginRegister/>}/>
+                        <Route path="/author-profile" element={<AuthorProfile/>}/>
+                        <Route path="/create-item" element={<CreateItem/>}/>
+                        <Route path="/category" element={<Category/>}/>
+                        <Route path="/creators" element={<Creators/>}/>
+                        <Route path="/author-profile" element={<AuthorProfile/>}/>
+                        <Route path="/author-profile/:tokenId" element={<MarketSingle/>}/>
+                        {/*<Route path="/market-single" element={<MarketSingle/>}/>*/}
+                        <Route path="/market-single/:tokenId" element={<MarketSingle/>}/>
+                        <Route path="/nft-live-bidding" element={<NftLiveBidding/>}/>
+                        <Route path="/connect-wallets" element={<LoginPage/>}/>
+                    </Routes>
+                </AdminWalletProvider>
             </AuthProvider>
         </div>
     );
