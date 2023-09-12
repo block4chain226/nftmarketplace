@@ -66,8 +66,6 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
             // updateUserContractDB(account, contract);
         }
         if (useFetchFromDb === undefined) {
-            console.log("!length", useFetchFromDb)
-            console.log("=>(useUserWriteToDb.js:98) useFetchFromDb", useFetchFromDb);
             writeUserContractDB(account, contract);
         }
     }
@@ -171,14 +169,14 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
     }
     //TODO do UsersListings the same way as writeOrUpdateUserListedTokensDB, delete listing from DB if unlist
     ///////////////////////////////////////////////////////////////////////// UsersListedTokens
-    const listTokenDB = async (account, contract, price, tokenId) => {
+    const listTokenDB = async (account, contract, price, tokenId, category, collectionName, image, description, name) => {
         setLoading(true);
         const exist = await contractExists(contract);
         if (!exist) {
             setError("Contract doesn't exist");
         }
         if (exist) {
-            if (db && account && contract && tokenId !== undefined || "" && price > 0) {
+            if (db && account && contract && tokenId && category && collectionName && name && image && description !== undefined || "" && price > 0) {
                 const signedMessage = await signTransaction(account.address, contract, price, tokenId);
                 const listingId = (account.address).concat(contract, tokenId);
                 const UsersListings = collection(db, 'UsersListings');
@@ -191,7 +189,13 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
                                 token: contract,
                                 tokenId: tokenId,
                                 price: price,
-                                signedMessage: signedMessage
+                                signedMessage: signedMessage,
+                                listingId: listingId,
+                                category: category,
+                                collectionName: collectionName,
+                                name: name,
+                                image: image,
+                                description: description
                             }
                         }
                         , {merge: true});

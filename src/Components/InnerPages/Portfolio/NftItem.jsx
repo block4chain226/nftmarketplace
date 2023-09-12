@@ -17,7 +17,7 @@ const NftItem = ({item}) => {
         e.preventDefault();
         let listingBtn = document.getElementById("listBtn".concat(item.tokenId));
         await writeOrUpdateUserListedTokensDB(accounts, item.contract, item.tokenId, getUserContractListedTokens, e.target.getAttribute("listingId"));
-        await listTokenDB(accounts, item.contract, 300000, item.tokenId);
+        await listTokenDB(accounts, item.contract, 300000, item.tokenId, item.category, item.collectionName, item.metadata.image, item.metadata.description, item.metadata.name);
         setTimeout(() => {
             setListed(true);
         }, 500)
@@ -35,7 +35,6 @@ const NftItem = ({item}) => {
     const unListToken = async (e) => {
         e.preventDefault();
         const listingId = document.getElementById("listBtn".concat(item.tokenId)).getAttribute("listingId");
-        console.log("=>(NftItem.jsx:38) listingId", listingId);
         await deleteUserListedTokenDB(accounts, item.contract, item.tokenId);
         await unListTokenDB(listingId);
         setTimeout(() => {
@@ -46,11 +45,8 @@ const NftItem = ({item}) => {
 
     const setListingAttribute = async () => {
         let listingBtn = document.getElementById("listBtn".concat(item.tokenId));
-        console.log("=>(NftItem.jsx:49) listingBtn", listingBtn);
         const atr = (accounts.address).concat(item.contract, item.tokenId)
-        console.log("=>(NftItem.jsx:51) atr", atr);
         listingBtn.setAttribute("listingId", atr);
-        console.log("atribute", listingBtn.getAttribute("listingId"));
     }
 
     useEffect(() => {

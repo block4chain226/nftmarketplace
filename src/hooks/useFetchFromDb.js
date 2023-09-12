@@ -72,11 +72,51 @@ const UseFetchFromDb = (account, func) => {
         return contractListWithCategories;
     }
 
+    //////////////////////////////////////////////////////////////TODO fetch from UsersListings
+    //TODO
+    const getAllListings = async () => {
+        const messagesRef = collection(db, 'UsersListings');
+        const q = query(messagesRef);
+        const docsSnap = await getDocs(q);
+        let allListings = [];
+        docsSnap.forEach((doc) => {
+            allListings.push(doc.data().listing);
+        });
+        return allListings;
+    }
+
+    const getListingByListingId = async (listingId) => {
+        const docRef = doc(db, "UsersListings", listingId);
+        const listing = await getDoc(docRef);
+        console.log("=>(useFetchFromDb.js:97) listing", listing.data().listing);
+        return listing.data();
+    }
+
+
+    const getAllCollectionListings = async (token) => {
+        if (token !== undefined || "") {
+            const messagesRef = collection(db, 'UsersListings');
+            const q = query(messagesRef, where("listing.token", "==", token));
+            const docsSnap = await getDocs(q);
+            let allCollectionListings = [];
+            docsSnap.forEach((doc) => {
+                allCollectionListings.push(doc.data().listing);
+            });
+            return allCollectionListings;
+        } else {
+            console.log("empty token address");
+        }
+    }
+
+
     return {
         contractExistsInDB: contractExistsInDB,
         getUserContractsList: getUserContractsList,
         getUserContractListedTokens: getUserContractListedTokens,
         getUserContractListWithCategories: getUserContractListWithCategories,
+        getAllListings: getAllListings,
+        getAllCollectionListings: getAllCollectionListings,
+        getListingByListingId: getListingByListingId,
         getHash: getHash
     };
 };

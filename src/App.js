@@ -19,6 +19,8 @@ import Ranking from './pages/Ranking'
 import LoginPage from "./Components/InnerPages/LoginPage"
 import {AuthProvider} from "./context/AuthContext";
 import {AdminWalletProvider} from "./context/AdminWalletContext";
+import CollectionItems from "./Components/InnerPages/Listing/CollectionItems";
+import SingleMarket from "./Components/InnerPages/marketsingle/SingleMarket";
 
 
 const clientId = "BH88U3rXLQxiX_zAoGEHCUaP0wBlxC82MB3yvnqDU-EDeKBoH60Y8Il-O8tMzQTGI5fSYTbwGtJEGb-O-NO_OI4";
@@ -53,6 +55,9 @@ function App() {
                         <Route path="/category" element={<Category/>}/>
                         <Route path="/creators" element={<Creators/>}/>
                         <Route path="/author-profile" element={<AuthorProfile/>}/>
+                        <Route path="/collection-items" element={<CollectionItems/>}/>
+                        <Route path="/collection-items/:token" element={<CollectionItems/>}/>
+                        <Route path="/single-market/:listingId" element={<SingleMarket/>}/>
                         <Route path="/author-profile/:tokenId" element={<MarketSingle/>}/>
                         {/*<Route path="/market-single" element={<MarketSingle/>}/>*/}
                         <Route path="/market-single/:tokenId" element={<MarketSingle/>}/>
