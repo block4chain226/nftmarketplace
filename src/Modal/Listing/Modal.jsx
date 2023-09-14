@@ -1,8 +1,8 @@
 import React, {useContext, useState} from 'react';
 import cl from "./Modal.module.css";
-import useFetchCollection from "../hooks/useFetchCollection";
-import AuthContext from "../context/AuthContext";
-import useUserWriteToDb from "../hooks/useUserWriteToDb";
+import useFetchCollection from "../../hooks/useFetchCollection";
+import AuthContext from "../../context/AuthContext";
+import useUserWriteToDb from "../../hooks/useUserWriteToDb";
 
 const Modal = (props) => {
 

@@ -17,11 +17,12 @@ const UseBlockchain = () => {
         }
     }
 
-    const signTransaction = async (account, contract, price, tokenId) => {
+    const signTransaction = async (buyer, price, seller, contract, tokenId) => {
         const messageHash = ethers.solidityPackedKeccak256(
-            ["address", "address", "uint", "uint"],
-            [account, contract, price, tokenId]);
+            ["address", "uint", "address", "address", "uint"],
+            [buyer, price, seller, contract, tokenId]);
         const messageHashBinary = ethers.getBytes(messageHash);
+        console.log(adminWallet.address);
         return await adminWallet.signMessage(messageHashBinary);
     }
 
