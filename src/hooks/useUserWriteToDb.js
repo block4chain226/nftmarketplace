@@ -140,7 +140,7 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
         }
         if (exist) {
             if (db && account && contract && tokenId !== undefined || "") {
-                const docRef = doc(db, "UsersListedTokens", account.address, "Contracts", contract);
+                const docRef = doc(db, "UsersListedTokens", account, "Contracts", contract);
                 try {
                     await updateDoc(docRef,
                         {
@@ -159,6 +159,7 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
     }
     //TODO
     const writeOrUpdateUserListedTokensDB = async (account, contract, tokenId, getUserContractListedTokens, listingId) => {
+        console.log("writeOrUpdateUserListedTokensDB", account, contract, tokenId, getUserContractListedTokens, listingId)
         const data = await getUserContractListedTokens(account, contract);
         if (data !== undefined) {
             await updateUsersListedTokensDB(account, contract, tokenId, listingId)
@@ -176,36 +177,39 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
             setError("Contract doesn't exist");
         }
         if (exist) {
-            if (db && account && contract && tokenId && category && collectionName && name && image && description !== undefined || "" && price > 0) {
-                const signedMessage = await signTransaction(account.address, contract, price, tokenId);
-                const listingId = (account.address).concat(contract, tokenId);
-                const UsersListings = collection(db, 'UsersListings');
-                const contractDoc = doc(UsersListings, listingId)
-                try {
-                    await setDoc(contractDoc,
-                        {
-                            listing: {
-                                seller: account.address,
-                                token: contract,
-                                tokenId: tokenId,
-                                price: price,
-                                signedMessage: signedMessage,
-                                listingId: listingId,
-                                category: category,
-                                collectionName: collectionName,
-                                name: name,
-                                image: image,
-                                description: description
-                            }
+            // if (db && account && contract && tokenId && category && collectionName && name && image && description !== undefined || "" && price > 0) {
+            const signedMessage = await signTransaction(price, account.address, contract, tokenId);
+            console.log("=>(useUserWriteToDb.js:182) signedMessage", signedMessage);
+            const listingId = (account.address).concat(contract, tokenId);
+            console.log("=>(useUserWriteToDb.js:184) listingId", listingId);
+            const UsersListings = collection(db, 'UsersListings');
+            console.log("category", category);
+            const contractDoc = doc(UsersListings, listingId)
+            try {
+                await setDoc(contractDoc,
+                    {
+                        listing: {
+                            seller: account.address,
+                            token: contract,
+                            tokenId: tokenId,
+                            price: price,
+                            signedMessage: signedMessage,
+                            listingId: listingId,
+                            category: category,
+                            collectionName: collectionName,
+                            name: name,
+                            image: image,
+                            description: description
                         }
-                        , {merge: true});
-                } catch (error) {
-                    setError({error: "Error on saving contract"});
-                    console.log(":rocket: ~ file: index.js:17 ~ error:", error);
-                }
-            } else {
-                setError("You didn't enter contract address");
+                    }
+                    , {merge: true});
+            } catch (error) {
+                setError({error: "Error on saving contract"});
+                console.log(":rocket: ~ file: index.js:17 ~ error:", error);
             }
+            // } else {
+            //     setError("You didn't enter contract address");
+            // }
         }
         setLoading({loading: true});
         setSuccess("success");
@@ -213,10 +217,7 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
     //TODO
     const unListTokenDB = async (listingId) => {
         setLoading(true);
-        const exist = await contractExists(contract);
-        if (!exist) {
-            setError("Contract doesn't exist");
-        }
+
         if (db && listingId !== undefined || "") {
             const UsersListings = collection(db, 'UsersListings');
             const contractDoc = doc(UsersListings, listingId);

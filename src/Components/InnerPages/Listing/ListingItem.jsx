@@ -6,26 +6,34 @@ import useBlockchain from "../../../hooks/useBlockchain";
 import BuyModal from "../../../Modal/ConfirmBuying/BuyModal";
 import {ethers} from "ethers";
 import marketplaceABI from "../../../abis/marketplace.json";
+import useUserWriteToDb from "../../../hooks/useUserWriteToDb";
 
 const ListingItem = ({item}) => {
 
     const {accounts, provider} = useContext(AuthContext);
-    const {signTransaction} = useBlockchain();
+    const {signTransaction, signBuyTransaction} = useBlockchain();
+
+    const {unListTokenDB, deleteUserListedTokenDB, writeUserContractDB} = useUserWriteToDb()
 
     const [showBuyModal, setShowBuyModal] = useState(false);
     const [makePurchase, setMakePurchase] = useState(false);
+    const [showItem, setShowItem] = useState(true);
+
     //TODO Metamask relogin when change address and delete listing from UsersListing after success selling
     //TODO update UsersContracts after token buy
     const buy = async () => {
-        console.log("itemBuy", item);
         const contract = new ethers.Contract("0xB1Ce55E2AEA74919e74cE8dF6c15E7543E1Cbff3", marketplaceABI.abi, accounts.address);
-        const hash = await signTransaction(accounts.address, item.price, item.seller, item.token, item.tokenId);
+        const hash = await signBuyTransaction(accounts, item.price, item.seller, item.token, item.tokenId);
         const totalPrice = 1000 + item.price;
-        console.log("=>(ListingItem.jsx:23) totalPrice", totalPrice);
         const res = await contract.connect(accounts).buy(item.price, item.seller, item.token, item.tokenId, hash, {value: ethers.parseUnits(totalPrice.toString(), "wei")});
-        console.log("=>(ListingItem.jsx:18) res", res);
-        setMakePurchase(false)
-        setShowBuyModal(false)
+        console.log("ListingItem", accounts, item.token, item.tokenId);
+        await unListTokenDB(item.listingId);
+        await deleteUserListedTokenDB(item.seller, item.token, item.tokenId);
+        //TODO write contract to new owner
+        await writeUserContractDB(accounts, item.token, item.category, item.collectionName);
+        setMakePurchase(false);
+        setShowBuyModal(false);
+        setShowItem(false);
     }
 
     useEffect(() => {
@@ -41,7 +49,7 @@ const ListingItem = ({item}) => {
             {showBuyModal && <BuyModal image={item.image} name={item.name} collectionName={item.collectionName}
                                        setShowBuyModal={setShowBuyModal} setMakePurchase={setMakePurchase}
                                        showBuyModal={showBuyModal}/>}
-            <div className="top-collection-item">
+            {showItem && <div className="top-collection-item">
                 <div className="collection-item-top">
                     <ul>
                         <li className="avatar"><a href="/author-profile" className="thumb"><img
@@ -80,9 +88,10 @@ const ListingItem = ({item}) => {
                         <li className="wishlist"><a href="/#">59</a></li>
                     </ul>
                 </div>
-            </div>
+            </div>}
         </div>
-    );
+    )
+        ;
 };
 
 export default ListingItem;

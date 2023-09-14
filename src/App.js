@@ -10,7 +10,6 @@ import Category from './pages/Category'
 import Collections from './pages/Collections'
 import CreateItem from './pages/CreateItem'
 import Creators from './pages/Creators'
-import Explore from './pages/Explore'
 import Home from './pages/Home'
 import LoginRegister from './pages/LoginRegister'
 import MarketSingle from './pages/MarketSingle'
@@ -21,6 +20,8 @@ import {AuthProvider} from "./context/AuthContext";
 import {AdminWalletProvider} from "./context/AdminWalletContext";
 import CollectionItems from "./Components/InnerPages/Listing/CollectionItems";
 import SingleMarket from "./Components/InnerPages/marketsingle/SingleMarket";
+import ArtWorks from "./Components/Explore/ArtWorks";
+import NftMarket from "./Components/Explore/NftMarket";
 
 
 const clientId = "BH88U3rXLQxiX_zAoGEHCUaP0wBlxC82MB3yvnqDU-EDeKBoH60Y8Il-O8tMzQTGI5fSYTbwGtJEGb-O-NO_OI4";
@@ -43,7 +44,7 @@ function App() {
                 <AdminWalletProvider>
                     <Routes>
                         <Route path="/" element={<Home/>}/>
-                        <Route path="/nft-marketplace" element={<Explore/>}/>
+                        <Route path="/nft-marketplace" element={<NftMarket/>}/>
                         <Route path="/collections" element={<Collections/>}/>
                         <Route path="/blog" element={<Blog/>}/>
                         <Route path="/blog-details" element={<BlogDetails/>}/>
@@ -54,7 +55,7 @@ function App() {
                         <Route path="/create-item" element={<CreateItem/>}/>
                         <Route path="/category" element={<Category/>}/>
                         <Route path="/creators" element={<Creators/>}/>
-                        <Route path="/author-profile" element={<AuthorProfile/>}/>
+                        {/*<Route path="/author-profile" element={<AuthorProfile/>}/>*/}
                         <Route path="/collection-items" element={<CollectionItems/>}/>
                         <Route path="/collection-items/:token" element={<CollectionItems/>}/>
                         <Route path="/single-market/:listingId" element={<SingleMarket/>}/>

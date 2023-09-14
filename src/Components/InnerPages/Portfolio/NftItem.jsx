@@ -16,7 +16,8 @@ const NftItem = ({item}) => {
     const listToken = async (e) => {
         e.preventDefault();
         let listingBtn = document.getElementById("listBtn".concat(item.tokenId));
-        await writeOrUpdateUserListedTokensDB(accounts, item.contract, item.tokenId, getUserContractListedTokens, e.target.getAttribute("listingId"));
+        await writeOrUpdateUserListedTokensDB(accounts, item.contract, item.tokenId, getUserContractListedTokens, listingBtn.getAttribute("listingId"));
+        console.log("item", item)
         await listTokenDB(accounts, item.contract, 300000, item.tokenId, item.category, item.collectionName, item.metadata.image, item.metadata.description, item.metadata.name);
         setTimeout(() => {
             setListed(true);
@@ -35,7 +36,7 @@ const NftItem = ({item}) => {
     const unListToken = async (e) => {
         e.preventDefault();
         const listingId = document.getElementById("listBtn".concat(item.tokenId)).getAttribute("listingId");
-        await deleteUserListedTokenDB(accounts, item.contract, item.tokenId);
+        await deleteUserListedTokenDB(accounts.address, item.contract, item.tokenId);
         await unListTokenDB(listingId);
         setTimeout(() => {
             setListed(false);

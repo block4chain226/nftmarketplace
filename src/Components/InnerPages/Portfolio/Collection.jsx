@@ -29,6 +29,7 @@ const Collection = ({item, setContract}) => {
                     <img src={item.metadata.image}
                          onClick={(e) => setContract(e.currentTarget.getAttribute("data-contract"))}
                          data-category={item.category} data-contract={item.contract}
+                         key={item.name}
                          alt=""/>
                 </div>
                 <div className="collection-item-content">
@@ -38,7 +39,7 @@ const Collection = ({item, setContract}) => {
                 <div className="collection-item-bottom">
                     <ul>
                         <li className="bid"><a href="/market-single"
-                                                                           className="btn">place a bid</a>
+                                               className="btn">place a bid</a>
                         </li>
                         <li className="wishlist"><a
                             href="/login-register">59</a></li>
