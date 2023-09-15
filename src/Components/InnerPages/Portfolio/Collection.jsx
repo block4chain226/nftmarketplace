@@ -1,6 +1,11 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import {Link} from "react-router-dom";
 
-const Collection = ({item, setContract}) => {
+const Collection = ({item, setContract, accounts}) => {
+
+    useEffect(() => {
+        console.log(accounts.address, item.contract)
+    }, [])
 
     return (
         <div className="col-xl-4 col-md-6 col-sm-6">
@@ -26,11 +31,12 @@ const Collection = ({item, setContract}) => {
                     </ul>
                 </div>
                 <div className="collection-item-thumb" style={{cursor: "pointer"}}>
-                    <img src={item.metadata.image}
-                         onClick={(e) => setContract(e.currentTarget.getAttribute("data-contract"))}
-                         data-category={item.category} data-contract={item.contract}
-                         key={item.name}
-                         alt=""/>
+                    <Link to={`/collection-items/${accounts.address}/${item.contract}`}> <img src={item.metadata.image}
+                                                                                              onClick={(e) => setContract(e.currentTarget.getAttribute("data-contract"))}
+                        // data-category={item.category}
+                        // data-contract={item.contract}
+                                                                                              key={item.name}
+                                                                                              alt=""/></Link>
                 </div>
                 <div className="collection-item-content">
                     <h5 className="title"><a href="/market-single">{item.collectionName}</a> <span

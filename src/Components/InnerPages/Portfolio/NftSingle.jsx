@@ -14,7 +14,7 @@ const SingleMarket = () => {
     const {getAllSingleContractTokensOfUser} = useFetchCollection();
 
     const getNftInfo = async () => {
-        const allNfts = await getAllSingleContractTokensOfUser("5", accounts, contract);
+        const allNfts = await getAllSingleContractTokensOfUser("5", accounts.address, contract);
         const nft1 = allNfts.filter(item => item.tokenId === tokenId);
         console.log("=>(NftSingle.jsx:20) nft", nft1[0]);
         setNft(nft1[0]);

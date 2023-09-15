@@ -4,7 +4,6 @@ import AuthContext from "../../../context/AuthContext";
 import useUserWriteToDb from "../../../hooks/useUserWriteToDb";
 import useFetchFromDb from "../../../hooks/useFetchFromDb";
 import Collection from "./Collection";
-import NftItem from "./NftItem";
 
 const Portfolio = () => {
     const {accounts} = useContext(AuthContext);
@@ -48,7 +47,7 @@ const Portfolio = () => {
 
     const getCollectionItemsData = async (account, contract) => {
         if (account !== undefined || "" && contract !== undefined || "") {
-            const nfts = await getAllSingleContractTokensOfUser("5", account, contract);
+            const nfts = await getAllSingleContractTokensOfUser("5", account.address, contract);
             console.log("=>(Portfolio.jsx:49) nfts", nfts);
             //TODO check if listing exists
             if (nfts.length) {
@@ -61,24 +60,21 @@ const Portfolio = () => {
         if (accounts !== null || "" || undefined) getCollectionsData(accounts);
     }, [accounts])
 
-    useEffect(() => {
-        if (contract !== "") getCollectionItemsData(accounts, contract);
-    }, [contract])
-
-    useEffect(() => {
-        if (nftItems.length) setShowItems(true)
-    }, [nftItems])
+    // useEffect(() => {
+    //     if (contract !== "") getCollectionItemsData(accounts, contract);
+    // }, [contract])
+    //
+    // useEffect(() => {
+    //     if (nftItems.length) setShowItems(true)
+    // }, [nftItems])
 
     return (
         <div className="row justify-content-center">
             {
-                !showItems ? collections.map((item) => (
-                            <Collection item={item} key={item.collectionName} setContract={setContract}/>
-                        )
-                    ) :
-                    nftItems.map((item) => (
-                        <NftItem item={item} key={item.metadata.name}/>
-                    ))
+                collections && collections.map((item) => (
+                        <Collection accounts={accounts} item={item} key={item.collectionName} setContract={setContract}/>
+                    )
+                )
             }
         </div>
     );

@@ -54,11 +54,11 @@ const UseFetchCollection = (chainId, wallet, contracts, func) => {
     const getAllSingleContractTokensOfUser = async (chainId, wallet, contract) => {
         if (wallet !== "" || undefined && chainId !== "" || undefined) {
             setLoading(true);
-            const allUserContractsWithCategories = await getUserContractListWithCategories(wallet.address);
+            const allUserContractsWithCategories = await getUserContractListWithCategories(wallet);
             let data = [];
             try {
                 data = await axios.get(
-                    `https://nft.api.infura.io/networks/${chainId}/accounts/${wallet.address}/assets/nfts?tokenAddresses=${contract}`,
+                    `https://nft.api.infura.io/networks/${chainId}/accounts/${wallet}/assets/nfts?tokenAddresses=${contract}`,
                     {
                         headers: {
                             Authorization: `Basic ${Auth}`,

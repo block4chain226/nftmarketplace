@@ -13,7 +13,7 @@ const CollectionItems = () => {
 
     const getCollectionListings = async () => {
         const allListings = await getAllCollectionListings(token);
-        console.log("=>(CollectionItems.jsx:15) allListings", allListings);
+        console.log("=>(CurrentCollectionItems.jsx:15) allListings", allListings);
         setAllCollectionListings(allListings);
 
     }

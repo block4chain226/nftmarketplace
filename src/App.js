@@ -22,6 +22,7 @@ import CollectionItems from "./Components/InnerPages/Listing/CollectionItems";
 import SingleMarket from "./Components/InnerPages/marketsingle/SingleMarket";
 import NftMarket from "./Components/Explore/NftMarket";
 import NftSingle from "./Components/InnerPages/Portfolio/NftSingle";
+import CurrentCollectionItems from "./Components/InnerPages/Portfolio/CurrentCollectionItems";
 
 
 const clientId = "BH88U3rXLQxiX_zAoGEHCUaP0wBlxC82MB3yvnqDU-EDeKBoH60Y8Il-O8tMzQTGI5fSYTbwGtJEGb-O-NO_OI4";
@@ -52,6 +53,7 @@ function App() {
                         <Route path="/ranking" element={<Ranking/>}/>
                         <Route path="/login-register" element={<LoginRegister/>}/>
                         <Route path="/author-profile" element={<AuthorProfile/>}/>
+                        <Route path="/collection-items/:accounts/:contract" element={<CurrentCollectionItems/>}/>
                         <Route path="/create-item" element={<CreateItem/>}/>
                         <Route path="/category" element={<Category/>}/>
                         <Route path="/creators" element={<Creators/>}/>
