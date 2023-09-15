@@ -97,7 +97,6 @@ const NftItem = ({item}) => {
                             <li className="bid"><a href="/market-single" onClick={(e) => unListToken(e)}
                                                    className="btn">Unlist</a></li>
                         }
-                        {/*<button onClick={inster}>check</button>*/}
 
                         <li className="wishlist"><a
                             href="/login-register">59</a></li>

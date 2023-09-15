@@ -14,9 +14,7 @@ const Portfolio = () => {
     const [contract, setContract] = useState("");
 
     const {getAllContractsTokensOfUser, getAllSingleContractTokensOfUser} = useFetchCollection();
-    const {writeUserContractDB} = useUserWriteToDb();
     const {getUserContractsList} = useFetchFromDb();
-    const {getAllListings} = useFetchFromDb();
 
 
     const getCollectionsData = async (account) => {
@@ -45,28 +43,9 @@ const Portfolio = () => {
 
     }
 
-    const getCollectionItemsData = async (account, contract) => {
-        if (account !== undefined || "" && contract !== undefined || "") {
-            const nfts = await getAllSingleContractTokensOfUser("5", account.address, contract);
-            console.log("=>(Portfolio.jsx:49) nfts", nfts);
-            //TODO check if listing exists
-            if (nfts.length) {
-                setNftItems(nfts);
-            }
-        }
-    }
-
     useEffect(() => {
         if (accounts !== null || "" || undefined) getCollectionsData(accounts);
     }, [accounts])
-
-    // useEffect(() => {
-    //     if (contract !== "") getCollectionItemsData(accounts, contract);
-    // }, [contract])
-    //
-    // useEffect(() => {
-    //     if (nftItems.length) setShowItems(true)
-    // }, [nftItems])
 
     return (
         <div className="row justify-content-center">

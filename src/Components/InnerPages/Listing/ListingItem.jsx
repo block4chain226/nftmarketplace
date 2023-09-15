@@ -9,18 +9,14 @@ import marketplaceABI from "../../../abis/marketplace.json";
 import useUserWriteToDb from "../../../hooks/useUserWriteToDb";
 
 const ListingItem = ({item}) => {
-
     const {accounts, provider} = useContext(AuthContext);
     const {signTransaction, signBuyTransaction} = useBlockchain();
-
-    const {unListTokenDB, deleteUserListedTokenDB, writeUserContractDB} = useUserWriteToDb()
+    const {unListTokenDB, deleteUserListedTokenDB, writeUserContractDB} = useUserWriteToDb();
 
     const [showBuyModal, setShowBuyModal] = useState(false);
     const [makePurchase, setMakePurchase] = useState(false);
     const [showItem, setShowItem] = useState(true);
 
-    //TODO Metamask relogin when change address and delete listing from UsersListing after success selling
-    //TODO update UsersContracts after token buy
     const buy = async () => {
         const contract = new ethers.Contract("0xB1Ce55E2AEA74919e74cE8dF6c15E7543E1Cbff3", marketplaceABI.abi, accounts.address);
         const hash = await signBuyTransaction(accounts, item.price, item.seller, item.token, item.tokenId);
