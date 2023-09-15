@@ -57,8 +57,8 @@ const NftSingle = () => {
     }
 
     const setListingAttribute = async () => {
-        let listingBtn = document.getElementById("listBtn".concat(nft.tokenId));
-        const atr = (accounts.address).concat(nft.contract, nft.tokenId)
+        let listingBtn = document.getElementById("listBtn".concat(tokenId));
+        const atr = (accounts.address).concat(contract, tokenId)
         listingBtn.setAttribute("listingId", atr);
     }
 
@@ -148,7 +148,7 @@ const NftSingle = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="collection-item-bottom" id={"listBtn".concat(nft.tokenId)}>
+                                <div className="collection-item-bottom" id={"listBtn".concat(tokenId)}>
                                     <ul>
                                         {!listed ?
                                             <li className="bid"><a href="/market-single" onClick={(e) => listToken(e)}
