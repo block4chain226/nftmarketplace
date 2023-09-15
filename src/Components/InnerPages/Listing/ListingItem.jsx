@@ -3,10 +3,11 @@ import React, {useContext, useEffect, useState} from 'react';
 import {Link} from "react-router-dom";
 import AuthContext from "../../../context/AuthContext";
 import useBlockchain from "../../../hooks/useBlockchain";
-import BuyModal from "../../../Modal/ConfirmBuying/BuyModal";
 import {ethers} from "ethers";
 import marketplaceABI from "../../../abis/marketplace.json";
 import useUserWriteToDb from "../../../hooks/useUserWriteToDb";
+import MakeOfferModal from "../../../Modal/MakeOffer/MakeOfferModal";
+import BuyModal from "../../../Modal/ConfirmBuying/BuyModal";
 
 const ListingItem = ({item}) => {
     const {accounts, provider} = useContext(AuthContext);
@@ -14,6 +15,7 @@ const ListingItem = ({item}) => {
     const {unListTokenDB, deleteUserListedTokenDB, writeUserContractDB} = useUserWriteToDb();
 
     const [showBuyModal, setShowBuyModal] = useState(false);
+    const [showOfferModal, setShowOfferModal] = useState(false);
     const [makePurchase, setMakePurchase] = useState(false);
     const [showItem, setShowItem] = useState(true);
 
@@ -21,15 +23,18 @@ const ListingItem = ({item}) => {
         const contract = new ethers.Contract("0xB1Ce55E2AEA74919e74cE8dF6c15E7543E1Cbff3", marketplaceABI.abi, accounts.address);
         const hash = await signBuyTransaction(accounts, item.price, item.seller, item.token, item.tokenId);
         const totalPrice = 1000 + item.price;
-        const res = await contract.connect(accounts).buy(item.price, item.seller, item.token, item.tokenId, hash, {value: ethers.parseUnits(totalPrice.toString(), "wei")});
-        console.log("ListingItem", accounts, item.token, item.tokenId);
-        await unListTokenDB(item.listingId);
-        await deleteUserListedTokenDB(item.seller, item.token, item.tokenId);
-        //TODO write contract to new owner
-        await writeUserContractDB(accounts, item.token, item.category, item.collectionName);
-        setMakePurchase(false);
-        setShowBuyModal(false);
-        setShowItem(false);
+        try {
+            await contract.connect(accounts).buy(item.price, item.seller, item.token, item.tokenId, hash, {value: ethers.parseUnits(totalPrice.toString(), "wei")});
+            await unListTokenDB(item.listingId);
+            await deleteUserListedTokenDB(item.seller, item.token, item.tokenId);
+            //TODO write contract to new owner
+            await writeUserContractDB(accounts, item.token, item.category, item.collectionName);
+            setMakePurchase(false);
+            setShowBuyModal(false);
+            setShowItem(false);
+        } catch (err) {
+            console.error(err);
+        }
     }
 
     useEffect(() => {
@@ -42,6 +47,9 @@ const ListingItem = ({item}) => {
     return (
 
         <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+            {showOfferModal && <MakeOfferModal image={item.image} name={item.name} collectionName={item.collectionName}
+                                               setShowOfferModal={setShowOfferModal} setMakePurchase={setMakePurchase}
+                                               showOfferModal={showOfferModal}/>}
             {showBuyModal && <BuyModal image={item.image} name={item.name} collectionName={item.collectionName}
                                        setShowBuyModal={setShowBuyModal} setMakePurchase={setMakePurchase}
                                        showBuyModal={showBuyModal}/>}
@@ -75,10 +83,16 @@ const ListingItem = ({item}) => {
                 </div>
                 <div className="collection-item-bottom">
                     <ul>
-                        <li className="bid">
-                            <button className="btn" onClick={() => {
+                        <li className="bid" style={{width: "30%"}}>
+                            <button className="btn" style={{width: "30%"}} onClick={() => {
                                 setShowBuyModal(true)
                             }}>buy
+                            </button>
+                        </li>
+                        <li className="bid" style={{width: "30%"}}>
+                            <button className="btn" style={{width: "30%"}} onClick={() => {
+                                setShowOfferModal(true)
+                            }}>Make Offer
                             </button>
                         </li>
                         <li className="wishlist"><a href="/#">59</a></li>
