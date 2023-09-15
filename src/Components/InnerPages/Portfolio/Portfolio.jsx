@@ -21,24 +21,27 @@ const Portfolio = () => {
 
 
     const getCollectionsData = async (account) => {
-        if (account !== undefined || "") {
+        if (account !== undefined || "" || null) {
             const contracts = await getUserContractsList(accounts);
-            const allTokens = await getAllContractsTokensOfUser("5", account);
-            let lastContract;
-            for (let i = 0; i < allTokens.length; i++) {
-                if (i === 0) {
-                    lastContract = allTokens[i].contract;
-                    continue;
+            if (contracts.length > 0) {
+                const allTokens = await getAllContractsTokensOfUser("5", account);
+                let lastContract;
+                for (let i = 0; i < allTokens.length; i++) {
+                    if (i === 0) {
+                        lastContract = allTokens[i].contract;
+                        continue;
+                    }
+                    if (allTokens[i].contract === lastContract) {
+                        allTokens.splice(i, 1);
+                        i--;
+                    }
+                    if (allTokens[i].contract !== lastContract) {
+                        lastContract = allTokens[i].contract
+                    }
                 }
-                if (allTokens[i].contract === lastContract) {
-                    allTokens.splice(i, 1);
-                    i--;
-                }
-                if (allTokens[i].contract !== lastContract) {
-                    lastContract = allTokens[i].contract
-                }
+                setCollections(allTokens);
             }
-            setCollections(allTokens);
+
         }
 
     }
@@ -46,7 +49,7 @@ const Portfolio = () => {
     const getCollectionItemsData = async (account, contract) => {
         if (account !== undefined || "" && contract !== undefined || "") {
             const nfts = await getAllSingleContractTokensOfUser("5", account, contract);
-            console.log("=>(Portfolio.jsx:50) nfts", nfts);
+            console.log("=>(Portfolio.jsx:49) nfts", nfts);
             //TODO check if listing exists
             if (nfts.length) {
                 setNftItems(nfts);
@@ -55,7 +58,7 @@ const Portfolio = () => {
     }
 
     useEffect(() => {
-        if (accounts !== null) getCollectionsData(accounts);
+        if (accounts !== null || "" || undefined) getCollectionsData(accounts);
     }, [accounts])
 
     useEffect(() => {

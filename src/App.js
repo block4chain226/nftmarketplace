@@ -20,8 +20,8 @@ import {AuthProvider} from "./context/AuthContext";
 import {AdminWalletProvider} from "./context/AdminWalletContext";
 import CollectionItems from "./Components/InnerPages/Listing/CollectionItems";
 import SingleMarket from "./Components/InnerPages/marketsingle/SingleMarket";
-import ArtWorks from "./Components/Explore/ArtWorks";
 import NftMarket from "./Components/Explore/NftMarket";
+import NftSingle from "./Components/InnerPages/Portfolio/NftSingle";
 
 
 const clientId = "BH88U3rXLQxiX_zAoGEHCUaP0wBlxC82MB3yvnqDU-EDeKBoH60Y8Il-O8tMzQTGI5fSYTbwGtJEGb-O-NO_OI4";
@@ -59,7 +59,7 @@ function App() {
                         <Route path="/collection-items" element={<CollectionItems/>}/>
                         <Route path="/collection-items/:token" element={<CollectionItems/>}/>
                         <Route path="/single-market/:listingId" element={<SingleMarket/>}/>
-                        <Route path="/author-profile/:tokenId" element={<MarketSingle/>}/>
+                        <Route path="/nft-info/:tokenId/:contract" element={<NftSingle/>}/>
                         {/*<Route path="/market-single" element={<MarketSingle/>}/>*/}
                         <Route path="/market-single/:tokenId" element={<MarketSingle/>}/>
                         <Route path="/nft-live-bidding" element={<NftLiveBidding/>}/>

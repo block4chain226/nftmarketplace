@@ -79,11 +79,11 @@ const NftItem = ({item}) => {
                 </div>
 
                 <div className="collection-item-thumb">
-                    <Link to={`/market-single/${item.tokenId}`} state={item}><img src={item.metadata.image}
-                                                                                  key={item.tokenId}
-                                                                                  data-category={item.category}
-                                                                                  data-contract={item.contract}
-                                                                                  alt=""/></Link>
+                    <Link to={`/nft-info/${item.tokenId}/${item.contract}`}><img src={item.metadata.image}
+                                                                                 key={item.tokenId}
+                                                                                 data-category={item.category}
+                                                                                 data-contract={item.contract}
+                                                                                 alt=""/></Link>
                 </div>
                 <div className="collection-item-content">
                     <h5 className="title"><a href="/market-single">{item.metadata.name}</a> <span
