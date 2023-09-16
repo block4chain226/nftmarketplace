@@ -108,6 +108,17 @@ const UseFetchFromDb = (account, func) => {
         }
     }
 
+    ///////////////////////////////////////////////////////////////////TODO ListingsOffers
+    //TODO check if offer value is bigger than last offer, get currentPrice, if lastPrice === null && lastPrice < newOffer => lastPrice = newOffer
+    const getLastOfferPrice = async (listingId) => {
+        const docRef = doc(db, "ListingsOffers", listingId);
+        const listing = await getDoc(docRef);
+        if (listing.exists()) {
+            return listing.data().bestOffer;
+        } else {
+            return null;
+        }
+    }
 
     return {
         contractExistsInDB: contractExistsInDB,
@@ -117,6 +128,7 @@ const UseFetchFromDb = (account, func) => {
         getAllListings: getAllListings,
         getAllCollectionListings: getAllCollectionListings,
         getListingByListingId: getListingByListingId,
+        getLastOfferPrice: getLastOfferPrice,
         getHash: getHash
     };
 };

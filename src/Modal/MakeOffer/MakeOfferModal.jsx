@@ -12,12 +12,15 @@ const MakeOfferModal = ({
                             setMakeOffer,
                             offerPrice,
                             setOfferPrice,
-                            showOfferModal
+                            showOfferModal,
+                            bestOffer,
+                            floorPrice,
+                            setError,
+                            error
                         }) => {
-
     const {accounts, provider} = useContext(AuthContext);
     const [balance, setBalance] = useState("");
-    const [error, setError] = useState(null);
+
 
     const getAccountBalance = async () => {
         const balance = await provider.getBalance(accounts.address);
@@ -45,8 +48,8 @@ const MakeOfferModal = ({
                     <div className={cl.Modal}>
                         <div className={cl.container}>
                             <div className={cl.rectangle} onClick={() => setShowOfferModal(false)}></div>
-                            <div className={cl.title}>{error && !offerPrice ? <h4>{error}</h4> :
-                                <h3>Make an offer</h3>}</div>
+                            {error && error}
+                            <div className={cl.title}><h3>Make an offer</h3></div>
                             <div className={cl.image_info}>
                                 <div className={cl.picture}>
                                     <img src={image} alt=""/>
@@ -63,16 +66,17 @@ const MakeOfferModal = ({
                                 </div>
                                 <div className={cl.floor_price}>
                                     <span>Floor price</span>
-                                    <span>0 Ether</span>
+                                    <span>{ethers.formatEther(floorPrice)}</span>
                                 </div>
                                 <div className={cl.best_offer}>
                                     <span>Best offer</span>
-                                    <span>0 Ether</span>
+                                    <span>{bestOffer && ethers.formatEther(ethers.parseUnits(bestOffer.toString(), 18))}</span>
                                 </div>
                             </div>
                             <div className={cl.input}>
                                 <p>{offerPrice}</p>
                                 <input type="number"
+                                       id="input1"
                                        pattern="[0-9]*"
                                        onChange={(e) => setOfferPrice(e.target.value)}
                                        style={{

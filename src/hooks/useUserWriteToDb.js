@@ -231,19 +231,20 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
     }
 
     ///////////////////////////////////////////////////////////////////TODO ListingsOffers
-    const writeListingOffer = async (listingId, account, price) => {
+    const writeListingOffer = async (listingId, account, offerPrice) => {
         setLoading(true);
-        if (db && account && listingId !== "" || undefined || null && price > 0) {
+        if ((db && account && listingId !== "" || undefined || null) && offerPrice > 0) {
             const ListingsOffers = collection(db, 'ListingsOffers');
             const contractDoc = doc(ListingsOffers, listingId)
             try {
                 await setDoc(contractDoc,
                     {
-                        [account]: {
-                            price: price,
+                        [account.concat(new Date().getTime())]: {
+                            price: offerPrice,
                             account: account,
                             date: new Date().getTime()
-                        }
+                        },
+                        bestOffer: offerPrice,
                     }
                     , {merge: true});
             } catch (error) {

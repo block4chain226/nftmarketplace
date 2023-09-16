@@ -1,5 +1,4 @@
 import React, {useContext, useEffect, useState} from 'react';
-
 import {Link} from "react-router-dom";
 import AuthContext from "../../../context/AuthContext";
 import useBlockchain from "../../../hooks/useBlockchain";
@@ -8,11 +7,13 @@ import marketplaceABI from "../../../abis/marketplace.json";
 import useUserWriteToDb from "../../../hooks/useUserWriteToDb";
 import MakeOfferModal from "../../../Modal/MakeOffer/MakeOfferModal";
 import BuyModal from "../../../Modal/ConfirmBuying/BuyModal";
+import useFetchFromDb from "../../../hooks/useFetchFromDb";
 
 const ListingItem = ({item}) => {
     const {accounts, provider} = useContext(AuthContext);
     const {signTransaction, signBuyTransaction} = useBlockchain();
     const {unListTokenDB, deleteUserListedTokenDB, writeUserContractDB, writeListingOffer} = useUserWriteToDb();
+    const {getLastOfferPrice} = useFetchFromDb();
 
     const [showBuyModal, setShowBuyModal] = useState(false);
     const [showOfferModal, setShowOfferModal] = useState(false);
@@ -20,6 +21,8 @@ const ListingItem = ({item}) => {
     const [offerPrice, setOfferPrice] = useState(0);
     const [makeOffer, setMakeOffer] = useState(false);
     const [showItem, setShowItem] = useState(true);
+    const [bestOffer, setBestOffer] = useState(0);
+    const [error, setError] = useState(null);
 
     const buy = async () => {
         const contract = new ethers.Contract("0xB1Ce55E2AEA74919e74cE8dF6c15E7543E1Cbff3", marketplaceABI.abi, accounts.address);
@@ -29,7 +32,6 @@ const ListingItem = ({item}) => {
             await contract.connect(accounts).buy(item.price, item.seller, item.token, item.tokenId, hash, {value: ethers.parseUnits(totalPrice.toString(), "wei")});
             await unListTokenDB(item.listingId);
             await deleteUserListedTokenDB(item.seller, item.token, item.tokenId);
-            //TODO write contract to new owner
             await writeUserContractDB(accounts, item.token, item.category, item.collectionName);
             setMakePurchase(false);
             setShowBuyModal(false);
@@ -41,15 +43,28 @@ const ListingItem = ({item}) => {
 
     const makeNewOffer = async () => {
         if ((accounts !== null || undefined) && offerPrice > 0) {
-            try {
-                await writeListingOffer(item.listingId, accounts.address, offerPrice);
-                setShowOfferModal(false);
-            } catch (err) {
-                console.log(err);
+            await getLastOfferPrice(item.listingId);
+            if ((bestOffer === null && offerPrice <= item.price) || (offerPrice > bestOffer && offerPrice <= item.price)) {
+                try {
+                    await writeListingOffer(item.listingId, accounts.address, offerPrice);
+                    setOfferPrice(0);
+                    setShowOfferModal(false);
+                } catch (err) {
+                    console.log(err);
+                }
+            } else {
+                setMakeOffer(false);
+                setError("Your offer must be bigger than the last one and lower than floor price");
             }
         } else {
+            setMakeOffer(false);
             console.log("offerPrice or account are empty");
         }
+    }
+
+    const getBestOfferPrice = async (listingId) => {
+        const bestOfferPrice = await getLastOfferPrice(item.listingId);
+        setBestOffer(bestOfferPrice);
     }
 
     useEffect(() => {
@@ -64,12 +79,18 @@ const ListingItem = ({item}) => {
         }
     }, [makeOffer])
 
+    useEffect(() => {
+        getBestOfferPrice(item.listingId);
+        setMakeOffer(false);
+    }, [offerPrice])
+
     return (
         <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6">
             {showOfferModal && <MakeOfferModal image={item.image} name={item.name} collectionName={item.collectionName}
                                                setShowOfferModal={setShowOfferModal} setMakeOffer={setMakeOffer}
                                                showOfferModal={showOfferModal} offerPrice={offerPrice}
-                                               setOfferPrice={setOfferPrice}/>}
+                                               floorPrice={item.price} bestOffer={bestOffer}
+                                               setOfferPrice={setOfferPrice} setError={setError} error={error}/>}
             {showBuyModal && <BuyModal image={item.image} name={item.name} collectionName={item.collectionName}
                                        setShowBuyModal={setShowBuyModal} setMakePurchase={setMakePurchase}
                                        showBuyModal={showBuyModal}/>}
@@ -120,8 +141,7 @@ const ListingItem = ({item}) => {
                 </div>
             </div>}
         </div>
-    )
-        ;
+    );
 };
 
 export default ListingItem;
