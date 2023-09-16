@@ -12,7 +12,7 @@ import BuyModal from "../../../Modal/ConfirmBuying/BuyModal";
 const ListingItem = ({item}) => {
     const {accounts, provider} = useContext(AuthContext);
     const {signTransaction, signBuyTransaction} = useBlockchain();
-    const {unListTokenDB, deleteUserListedTokenDB, writeUserContractDB} = useUserWriteToDb();
+    const {unListTokenDB, deleteUserListedTokenDB, writeUserContractDB, writeListingOffer} = useUserWriteToDb();
 
     const [showBuyModal, setShowBuyModal] = useState(false);
     const [showOfferModal, setShowOfferModal] = useState(false);
@@ -40,7 +40,16 @@ const ListingItem = ({item}) => {
     }
 
     const makeNewOffer = async () => {
-        console.log("OFFFFFFFFer", offerPrice);
+        if ((accounts !== null || undefined) && offerPrice > 0) {
+            try {
+                await writeListingOffer(item.listingId, accounts.address, offerPrice);
+                setShowOfferModal(false);
+            } catch (err) {
+                console.log(err);
+            }
+        } else {
+            console.log("offerPrice or account are empty");
+        }
     }
 
     useEffect(() => {
@@ -56,7 +65,6 @@ const ListingItem = ({item}) => {
     }, [makeOffer])
 
     return (
-
         <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6">
             {showOfferModal && <MakeOfferModal image={item.image} name={item.name} collectionName={item.collectionName}
                                                setShowOfferModal={setShowOfferModal} setMakeOffer={setMakeOffer}
