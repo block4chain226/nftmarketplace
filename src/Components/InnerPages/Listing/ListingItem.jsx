@@ -17,6 +17,8 @@ const ListingItem = ({item}) => {
     const [showBuyModal, setShowBuyModal] = useState(false);
     const [showOfferModal, setShowOfferModal] = useState(false);
     const [makePurchase, setMakePurchase] = useState(false);
+    const [offerPrice, setOfferPrice] = useState(0);
+    const [makeOffer, setMakeOffer] = useState(false);
     const [showItem, setShowItem] = useState(true);
 
     const buy = async () => {
@@ -37,19 +39,29 @@ const ListingItem = ({item}) => {
         }
     }
 
+    const makeNewOffer = async () => {
+        console.log("OFFFFFFFFer", offerPrice);
+    }
+
     useEffect(() => {
         if (makePurchase === true) {
             buy();
         }
-
     }, [makePurchase])
+
+    useEffect(() => {
+        if (makeOffer === true) {
+            makeNewOffer();
+        }
+    }, [makeOffer])
 
     return (
 
         <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6">
             {showOfferModal && <MakeOfferModal image={item.image} name={item.name} collectionName={item.collectionName}
-                                               setShowOfferModal={setShowOfferModal} setMakePurchase={setMakePurchase}
-                                               showOfferModal={showOfferModal}/>}
+                                               setShowOfferModal={setShowOfferModal} setMakeOffer={setMakeOffer}
+                                               showOfferModal={showOfferModal} offerPrice={offerPrice}
+                                               setOfferPrice={setOfferPrice}/>}
             {showBuyModal && <BuyModal image={item.image} name={item.name} collectionName={item.collectionName}
                                        setShowBuyModal={setShowBuyModal} setMakePurchase={setMakePurchase}
                                        showBuyModal={showBuyModal}/>}

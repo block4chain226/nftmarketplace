@@ -4,14 +4,34 @@ import AuthContext from "../../context/AuthContext";
 import {ethers} from "ethers";
 
 
-const MakeOfferModal = ({image, name, collectionName, setShowOfferModal, setMakePurchase, showOfferModal}) => {
+const MakeOfferModal = ({
+                            image,
+                            name,
+                            collectionName,
+                            setShowOfferModal,
+                            setMakeOffer,
+                            offerPrice,
+                            setOfferPrice,
+                            showOfferModal
+                        }) => {
 
     const {accounts, provider} = useContext(AuthContext);
     const [balance, setBalance] = useState("");
+    const [error, setError] = useState(null);
 
     const getAccountBalance = async () => {
         const balance = await provider.getBalance(accounts.address);
         setBalance(ethers.formatEther(balance));
+    }
+
+    const setOffer = async () => {
+        if (offerPrice > 0) {
+            setError(null);
+            setMakeOffer(true);
+        } else {
+            setError("Offer input must not be empty");
+            setMakeOffer(false);
+        }
     }
 
     useEffect(() => {
@@ -25,7 +45,8 @@ const MakeOfferModal = ({image, name, collectionName, setShowOfferModal, setMake
                     <div className={cl.Modal}>
                         <div className={cl.container}>
                             <div className={cl.rectangle} onClick={() => setShowOfferModal(false)}></div>
-                            <div className={cl.title}>Make an offer</div>
+                            <div className={cl.title}>{error && !offerPrice ? <h4>{error}</h4> :
+                                <h3>Make an offer</h3>}</div>
                             <div className={cl.image_info}>
                                 <div className={cl.picture}>
                                     <img src={image} alt=""/>
@@ -50,8 +71,10 @@ const MakeOfferModal = ({image, name, collectionName, setShowOfferModal, setMake
                                 </div>
                             </div>
                             <div className={cl.input}>
+                                <p>{offerPrice}</p>
                                 <input type="number"
                                        pattern="[0-9]*"
+                                       onChange={(e) => setOfferPrice(e.target.value)}
                                        style={{
                                            borderRadius: "10px",
                                            border: "0px",
@@ -60,14 +83,11 @@ const MakeOfferModal = ({image, name, collectionName, setShowOfferModal, setMake
                                        }}/>
                                 <label style={{color: "white", fontSize: "1.2vw"}}>Eth offer</label>
                             </div>
-                            <button className={cl.buttons1}>Make offer</button>
-
-
+                            <button className={cl.buttons1} onClick={setOffer}>Make offer</button>
                         </div>
                     </div>
                 </div>
             }
-
         </>
     );
 };
