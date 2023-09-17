@@ -72,7 +72,7 @@ const UseFetchFromDb = (account, func) => {
         return contractListWithCategories;
     }
 
-    //////////////////////////////////////////////////////////////TODO fetch from UsersListings
+    //////////////////////////////////////////////////////////////Fetch from UsersListings
     //TODO
     const getAllListings = async () => {
         const messagesRef = collection(db, 'UsersListings');
@@ -108,8 +108,7 @@ const UseFetchFromDb = (account, func) => {
         }
     }
 
-    ///////////////////////////////////////////////////////////////////TODO ListingsOffers
-    //TODO check if offer value is bigger than last offer, get currentPrice, if lastPrice === null && lastPrice < newOffer => lastPrice = newOffer
+    ///////////////////////////////////////////////////////////////////ListingsOffers
     const getLastOfferPrice = async (listingId) => {
         const docRef = doc(db, "ListingsOffers", listingId);
         const listing = await getDoc(docRef);

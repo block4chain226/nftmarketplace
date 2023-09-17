@@ -168,8 +168,8 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
             await writeUsersListedTokensDB(account, contract, tokenId, listingId);
         }
     }
-    //TODO do UsersListings the same way as writeOrUpdateUserListedTokensDB, delete listing from DB if unlist
-    ///////////////////////////////////////////////////////////////////////// UsersListedTokens
+
+    /////////////////////////////////////////////////////////////////////////UsersListedTokens
     const listTokenDB = async (account, contract, price, tokenId, category, collectionName, image, description, name) => {
         setLoading(true);
         const exist = await contractExists(contract);
@@ -230,7 +230,7 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
         setSuccess("success");
     }
 
-    ///////////////////////////////////////////////////////////////////TODO ListingsOffers
+    ///////////////////////////////////////////////////////////////////ListingsOffers
     const writeListingOffer = async (listingId, account, offerPrice) => {
         setLoading(true);
         if ((db && account && listingId !== "" || undefined || null) && offerPrice > 0) {
@@ -244,7 +244,10 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
                             account: account,
                             date: new Date().getTime()
                         },
-                        bestOffer: offerPrice,
+                        bestOffer: {
+                            account: account,
+                            bestOffer: offerPrice
+                        }
                     }
                     , {merge: true});
             } catch (error) {

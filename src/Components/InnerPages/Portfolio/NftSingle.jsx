@@ -13,11 +13,13 @@ const NftSingle = () => {
     const {accounts} = useContext(AuthContext);
 
     const [nft, setNft] = useState({});
+    const [listingId, setListingId] = useState("");
     const [listed, setListed] = useState(false);
+    const [bestOffer, setBestOffer] = useState({account: "", bestOffer: 0});
 
     const {getAllSingleContractTokensOfUser} = useFetchCollection();
     const {listTokenDB, unListTokenDB, deleteUserListedTokenDB, writeOrUpdateUserListedTokensDB} = useUserWriteToDb();
-    const {getUserContractListedTokens, getHash} = useFetchFromDb();
+    const {getUserContractListedTokens, getHash, getLastOfferPrice} = useFetchFromDb();
 
     const getNftInfo = async () => {
         const allNfts = await getAllSingleContractTokensOfUser("5", accounts.address, contract);
@@ -42,7 +44,6 @@ const NftSingle = () => {
             const result = allContractListedTokens.tokens.includes(tokenId);
             setListed(result);
         }
-        console.log(nft)
     }
 
     const unListToken = async (e) => {
@@ -53,13 +54,18 @@ const NftSingle = () => {
         setTimeout(() => {
             setListed(false);
         }, 500)
-
     }
 
     const setListingAttribute = async () => {
         let listingBtn = document.getElementById("listBtn".concat(tokenId));
         const atr = (accounts.address).concat(contract, tokenId)
+        setListingId(atr);
         listingBtn.setAttribute("listingId", atr);
+    }
+
+    const getBestOfferPrice = async (listingId) => {
+        const bestOfferData = await getLastOfferPrice(listingId);
+        setBestOffer(bestOfferData);
     }
 
     useEffect(() => {
@@ -70,6 +76,12 @@ const NftSingle = () => {
         isListed();
         getHash();
     }, [listed])
+
+    useEffect(() => {
+        if (listingId !== "" || undefined || null) {
+            getBestOfferPrice(listingId);
+        }
+    }, [listingId])
 
     return (
         <div className="main-content">
@@ -128,23 +140,22 @@ const NftSingle = () => {
                                 <div className="highest-bid-wrap">
                                     <div className="row">
                                         <div className="col-xl-6 col-lg-12 col-md-6">
-                                            <h5 className="title">Highest bid</h5>
+                                            <h5 className="title">Best offer</h5>
                                             <div className="highest-bid-avatar">
                                                 <div className="thumb"><img src="assets/img/others/heighest_avatar.png"
                                                                             alt=""/>
                                                 </div>
                                                 <div className="content">
-                                                    <h5 className="title"><a href="/author-profile">Tomas lindahl</a>
+                                                    <h5 className="title"><a href="/author-profile">{bestOffer.account}</a>
                                                     </h5>
-                                                    <span>3.005wETH</span>
+                                                    <span>{bestOffer.bestOffer} Eth</span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="col-xl-6 col-lg-12 col-md-6">
-                                            <h5 className="title">Auction has ended</h5>
-                                            <div className="bid-countdown-wrap">
-                                                <div className="coming-time" data-countdown="2022/05/16"/>
-                                            </div>
+                                            {/*<div className="bid-countdown-wrap">*/}
+                                            {/*    <div className="coming-time" data-countdown="2022/05/16"/>*/}
+                                            {/*</div>*/}
                                         </div>
                                     </div>
                                 </div>

@@ -10,8 +10,8 @@ import BuyModal from "../../../Modal/ConfirmBuying/BuyModal";
 import useFetchFromDb from "../../../hooks/useFetchFromDb";
 
 const ListingItem = ({item}) => {
-    const {accounts, provider} = useContext(AuthContext);
-    const {signTransaction, signBuyTransaction} = useBlockchain();
+    const {accounts} = useContext(AuthContext);
+    const {signBuyTransaction} = useBlockchain();
     const {unListTokenDB, deleteUserListedTokenDB, writeUserContractDB, writeListingOffer} = useUserWriteToDb();
     const {getLastOfferPrice} = useFetchFromDb();
 
@@ -21,7 +21,7 @@ const ListingItem = ({item}) => {
     const [offerPrice, setOfferPrice] = useState(0);
     const [makeOffer, setMakeOffer] = useState(false);
     const [showItem, setShowItem] = useState(true);
-    const [bestOffer, setBestOffer] = useState(0);
+    const [bestOffer, setBestOffer] = useState({account: "", bestOffer: 0});
     const [error, setError] = useState(null);
 
     const buy = async () => {
@@ -44,7 +44,8 @@ const ListingItem = ({item}) => {
     const makeNewOffer = async () => {
         if ((accounts !== null || undefined) && offerPrice > 0) {
             await getLastOfferPrice(item.listingId);
-            if ((bestOffer === null && offerPrice <= item.price) || (offerPrice > bestOffer && offerPrice <= item.price)) {
+            console.log("bestOffer", bestOffer);
+            if ((bestOffer === null && offerPrice <= item.price) || (offerPrice > bestOffer.bestOffer && offerPrice <= item.price)) {
                 try {
                     await writeListingOffer(item.listingId, accounts.address, offerPrice);
                     setOfferPrice(0);
@@ -63,8 +64,8 @@ const ListingItem = ({item}) => {
     }
 
     const getBestOfferPrice = async (listingId) => {
-        const bestOfferPrice = await getLastOfferPrice(item.listingId);
-        setBestOffer(bestOfferPrice);
+        const bestOfferData = await getLastOfferPrice(item.listingId);
+        setBestOffer(bestOfferData);
     }
 
     useEffect(() => {
