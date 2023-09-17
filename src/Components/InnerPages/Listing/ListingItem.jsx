@@ -12,7 +12,13 @@ import useFetchFromDb from "../../../hooks/useFetchFromDb";
 const ListingItem = ({item}) => {
     const {accounts} = useContext(AuthContext);
     const {signBuyTransaction} = useBlockchain();
-    const {unListTokenDB, deleteUserListedTokenDB, writeUserContractDB, writeListingOffer} = useUserWriteToDb();
+    const {
+        unListTokenDB,
+        deleteUserListedTokenDB,
+        writeUserContractDB,
+        writeListingOffer,
+        writeUsersOffers
+    } = useUserWriteToDb();
     const {getLastOfferPrice} = useFetchFromDb();
 
     const [showBuyModal, setShowBuyModal] = useState(false);
@@ -22,6 +28,7 @@ const ListingItem = ({item}) => {
     const [makeOffer, setMakeOffer] = useState(false);
     const [showItem, setShowItem] = useState(true);
     const [bestOffer, setBestOffer] = useState({account: "", bestOffer: 0});
+    const [duration, setDuration] = useState("1");
     const [error, setError] = useState(null);
 
     const buy = async () => {
@@ -44,10 +51,13 @@ const ListingItem = ({item}) => {
     const makeNewOffer = async () => {
         if ((accounts !== null || undefined) && offerPrice > 0) {
             await getLastOfferPrice(item.listingId);
-            console.log("bestOffer", bestOffer);
             if ((bestOffer === null && offerPrice <= item.price) || (offerPrice > bestOffer.bestOffer && offerPrice <= item.price)) {
                 try {
-                    await writeListingOffer(item.listingId, accounts.address, offerPrice);
+                    const dateInfo = new Date();
+                    const date = new Date().getTime();
+                    const endDate = dateInfo.setDate(dateInfo.getDate() + Number(duration));
+                    await writeListingOffer(item.listingId, accounts.address, offerPrice, date, endDate);
+                    await writeUsersOffers(item.listingId, accounts.address, offerPrice, item.seller, date, endDate);
                     setOfferPrice(0);
                     setShowOfferModal(false);
                 } catch (err) {
@@ -91,7 +101,8 @@ const ListingItem = ({item}) => {
                                                setShowOfferModal={setShowOfferModal} setMakeOffer={setMakeOffer}
                                                showOfferModal={showOfferModal} offerPrice={offerPrice}
                                                floorPrice={item.price} bestOffer={bestOffer}
-                                               setOfferPrice={setOfferPrice} setError={setError} error={error}/>}
+                                               setOfferPrice={setOfferPrice} setError={setError} duration={duration}
+                                               setDuration={setDuration} error={error}/>}
             {showBuyModal && <BuyModal image={item.image} name={item.name} collectionName={item.collectionName}
                                        setShowBuyModal={setShowBuyModal} setMakePurchase={setMakePurchase}
                                        showBuyModal={showBuyModal}/>}

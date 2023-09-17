@@ -128,3 +128,13 @@
     height: 100%;
     z-index: 10;
 }
+
+.duration{
+    margin-bottom: 20px;
+}
+
+.duration select{
+    border-radius: 10px;
+    padding: 5px;
+    border: 0;
+}

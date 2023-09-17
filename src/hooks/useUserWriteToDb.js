@@ -231,9 +231,10 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
     }
 
     ///////////////////////////////////////////////////////////////////ListingsOffers
-    const writeListingOffer = async (listingId, account, offerPrice) => {
+    //TODO
+    const writeListingOffer = async (listingId, account, offerPrice, date, endDate) => {
         setLoading(true);
-        if ((db && account && listingId !== "" || undefined || null) && offerPrice > 0) {
+        if ((db && account && listingId && endDate && date !== "" || undefined || null) && offerPrice && date && endDate > 0) {
             const ListingsOffers = collection(db, 'ListingsOffers');
             const contractDoc = doc(ListingsOffers, listingId)
             try {
@@ -242,11 +243,42 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
                         [account.concat(new Date().getTime())]: {
                             price: offerPrice,
                             account: account,
-                            date: new Date().getTime()
+                            date: date,
+                            endDate: endDate
                         },
                         bestOffer: {
                             account: account,
-                            bestOffer: offerPrice
+                            bestOffer: offerPrice,
+                            endDate: endDate
+                        }
+                    }
+                    , {merge: true});
+            } catch (error) {
+                setError({error: "Error on saving contract"});
+                console.log(":rocket: ~ file: index.js:17 ~ error:", error);
+            }
+        } else {
+            setError("listingId or account or price are empty");
+        }
+
+        setLoading({loading: true});
+        setSuccess("success");
+    }
+    //TODO
+    const writeUsersOffers = async (listingId, account, offerPrice, seller, date, endDate) => {
+        setLoading(true);
+        if ((db && account && listingId && endDate && date && seller !== "" || undefined || null) && offerPrice && date && endDate > 0) {
+            const UsersOffers = collection(db, 'UsersOffers');
+            const contractDoc = doc(UsersOffers, account)
+            try {
+                await setDoc(contractDoc,
+                    {
+                        [listingId]: {
+                            price: offerPrice,
+                            account: account,
+                            seller: seller,
+                            date: date,
+                            endDate: endDate
                         }
                     }
                     , {merge: true});
@@ -270,6 +302,7 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
         listTokenDB: listTokenDB,
         unListTokenDB: unListTokenDB,
         writeListingOffer: writeListingOffer,
+        writeUsersOffers: writeUsersOffers,
         success: success,
         loading: loading,
         error: error

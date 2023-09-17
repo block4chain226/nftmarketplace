@@ -145,11 +145,12 @@ const NftSingle = () => {
                                                 <div className="thumb"><img src="assets/img/others/heighest_avatar.png"
                                                                             alt=""/>
                                                 </div>
-                                                <div className="content">
-                                                    <h5 className="title"><a href="/author-profile">{bestOffer.account}</a>
-                                                    </h5>
-                                                    <span>{bestOffer.bestOffer} Eth</span>
-                                                </div>
+                                                {bestOffer !== null || undefined || "" ?
+                                                    <div className="content"><h5 className="title"><a
+                                                        href="/author-profile">{bestOffer.account}</a></h5>
+                                                        <span>{bestOffer.bestOffer} Eth</span>
+                                                    </div> : <h5>Token has no offers</h5>
+                                                }
                                             </div>
                                         </div>
                                         <div className="col-xl-6 col-lg-12 col-md-6">
@@ -162,9 +163,11 @@ const NftSingle = () => {
                                 <div className="collection-item-bottom" id={"listBtn".concat(tokenId)}>
                                     <ul>
                                         {!listed ?
-                                            <li className="bid"><a href="/market-single" onClick={(e) => listToken(e)}
+                                            <li className="bid"><a href="/market-single"
+                                                                   onClick={(e) => listToken(e)}
                                                                    className="btn">List</a></li> :
-                                            <li className="bid"><a href="/market-single" onClick={(e) => unListToken(e)}
+                                            <li className="bid"><a href="/market-single"
+                                                                   onClick={(e) => unListToken(e)}
                                                                    className="btn">Unlist</a></li>
                                         }
                                         <li className="wishlist"><a
@@ -220,13 +223,15 @@ const NftSingle = () => {
                                     <ul className="nav nav-tabs" id="myTab" role="tablist">
                                         <li className="nav-item" role="presentation">
                                             <button className="nav-link active" id="bid-tab" data-bs-toggle="tab"
-                                                    data-bs-target="#bid" type="button" role="tab" aria-controls="bid"
+                                                    data-bs-target="#bid" type="button" role="tab"
+                                                    aria-controls="bid"
                                                     aria-selected="true">Bid History
                                             </button>
                                         </li>
                                         <li className="nav-item" role="presentation">
                                             <button className="nav-link" id="info-tab" data-bs-toggle="tab"
-                                                    data-bs-target="#info" type="button" role="tab" aria-controls="info"
+                                                    data-bs-target="#info" type="button" role="tab"
+                                                    aria-controls="info"
                                                     aria-selected="false">Info
                                             </button>
                                         </li>
@@ -246,7 +251,8 @@ const NftSingle = () => {
                                                         <div className="bid-history-item">
                                                             <div className="highest-bid-avatar">
                                                                 <div className="thumb"><img
-                                                                    src="assets/img/others/heighest_avatar.png" alt=""/>
+                                                                    src="assets/img/others/heighest_avatar.png"
+                                                                    alt=""/>
                                                                 </div>
                                                                 <div className="content">
                                                                     <h5 className="title"><a href="/author-profile">Tomas
@@ -354,7 +360,8 @@ const NftSingle = () => {
                                                         <div className="bid-history-item">
                                                             <div className="highest-bid-avatar">
                                                                 <div className="thumb"><img
-                                                                    src="assets/img/others/heighest_avatar.png" alt=""/>
+                                                                    src="assets/img/others/heighest_avatar.png"
+                                                                    alt=""/>
                                                                 </div>
                                                                 <div className="content">
                                                                     <h5 className="title"><a href="/author-profile">Tomas
@@ -382,7 +389,8 @@ const NftSingle = () => {
                                                                     src="assets/img/others/heighest_avatar02.png"
                                                                     alt=""/></div>
                                                                 <div className="content">
-                                                                    <h5 className="title"><a href="/#">Tomas lindahl</a>
+                                                                    <h5 className="title"><a href="/#">Tomas
+                                                                        lindahl</a>
                                                                     </h5>
                                                                     <span>Bid listed</span>
                                                                 </div>
@@ -400,7 +408,8 @@ const NftSingle = () => {
                                                                     src="assets/img/others/heighest_avatar03.png"
                                                                     alt=""/></div>
                                                                 <div className="content">
-                                                                    <h5 className="title"><a href="/#">Tomas lindahl</a>
+                                                                    <h5 className="title"><a href="/#">Tomas
+                                                                        lindahl</a>
                                                                     </h5>
                                                                     <span>Bid listed</span>
                                                                 </div>
@@ -418,7 +427,8 @@ const NftSingle = () => {
                                                                     src="assets/img/others/heighest_avatar04.png"
                                                                     alt=""/></div>
                                                                 <div className="content">
-                                                                    <h5 className="title"><a href="/#">Tomas lindahl</a>
+                                                                    <h5 className="title"><a href="/#">Tomas
+                                                                        lindahl</a>
                                                                     </h5>
                                                                     <span>Bid listed</span>
                                                                 </div>
@@ -436,7 +446,8 @@ const NftSingle = () => {
                                                                     src="assets/img/others/heighest_avatar05.png"
                                                                     alt=""/></div>
                                                                 <div className="content">
-                                                                    <h5 className="title"><a href="/#">Tomas lindahl</a>
+                                                                    <h5 className="title"><a href="/#">Tomas
+                                                                        lindahl</a>
                                                                     </h5>
                                                                     <span>Bid listed</span>
                                                                 </div>
@@ -454,7 +465,8 @@ const NftSingle = () => {
                                                                     src="assets/img/others/heighest_avatar06.png"
                                                                     alt=""/></div>
                                                                 <div className="content">
-                                                                    <h5 className="title"><a href="/#">Tomas lindahl</a>
+                                                                    <h5 className="title"><a href="/#">Tomas
+                                                                        lindahl</a>
                                                                     </h5>
                                                                     <span>Bid listed</span>
                                                                 </div>
@@ -472,7 +484,8 @@ const NftSingle = () => {
                                                                     src="assets/img/others/heighest_avatar02.png"
                                                                     alt=""/></div>
                                                                 <div className="content">
-                                                                    <h5 className="title"><a href="/#">Tomas lindahl</a>
+                                                                    <h5 className="title"><a href="/#">Tomas
+                                                                        lindahl</a>
                                                                     </h5>
                                                                     <span>Bid listed</span>
                                                                 </div>
@@ -487,10 +500,12 @@ const NftSingle = () => {
                                                         <div className="bid-history-item">
                                                             <div className="highest-bid-avatar">
                                                                 <div className="thumb"><img
-                                                                    src="assets/img/others/heighest_avatar.png" alt=""/>
+                                                                    src="assets/img/others/heighest_avatar.png"
+                                                                    alt=""/>
                                                                 </div>
                                                                 <div className="content">
-                                                                    <h5 className="title"><a href="/#">Tomas lindahl</a>
+                                                                    <h5 className="title"><a href="/#">Tomas
+                                                                        lindahl</a>
                                                                     </h5>
                                                                     <span>Bid listed</span>
                                                                 </div>
@@ -512,10 +527,12 @@ const NftSingle = () => {
                                                         <div className="bid-history-item">
                                                             <div className="highest-bid-avatar">
                                                                 <div className="thumb"><img
-                                                                    src="assets/img/others/heighest_avatar.png" alt=""/>
+                                                                    src="assets/img/others/heighest_avatar.png"
+                                                                    alt=""/>
                                                                 </div>
                                                                 <div className="content">
-                                                                    <h5 className="title"><a href="/#">Tomas lindahl</a>
+                                                                    <h5 className="title"><a href="/#">Tomas
+                                                                        lindahl</a>
                                                                     </h5>
                                                                     <span>Bid listed</span>
                                                                 </div>
@@ -533,7 +550,8 @@ const NftSingle = () => {
                                                                     src="assets/img/others/heighest_avatar02.png"
                                                                     alt=""/></div>
                                                                 <div className="content">
-                                                                    <h5 className="title"><a href="/#">Tomas lindahl</a>
+                                                                    <h5 className="title"><a href="/#">Tomas
+                                                                        lindahl</a>
                                                                     </h5>
                                                                     <span>Bid listed</span>
                                                                 </div>
@@ -551,7 +569,8 @@ const NftSingle = () => {
                                                                     src="assets/img/others/heighest_avatar03.png"
                                                                     alt=""/></div>
                                                                 <div className="content">
-                                                                    <h5 className="title"><a href="/#">Tomas lindahl</a>
+                                                                    <h5 className="title"><a href="/#">Tomas
+                                                                        lindahl</a>
                                                                     </h5>
                                                                     <span>Bid listed</span>
                                                                 </div>
@@ -569,7 +588,8 @@ const NftSingle = () => {
                                                                     src="assets/img/others/heighest_avatar04.png"
                                                                     alt=""/></div>
                                                                 <div className="content">
-                                                                    <h5 className="title"><a href="/#">Tomas lindahl</a>
+                                                                    <h5 className="title"><a href="/#">Tomas
+                                                                        lindahl</a>
                                                                     </h5>
                                                                     <span>Bid listed</span>
                                                                 </div>
@@ -587,7 +607,8 @@ const NftSingle = () => {
                                                                     src="assets/img/others/heighest_avatar05.png"
                                                                     alt=""/></div>
                                                                 <div className="content">
-                                                                    <h5 className="title"><a href="/#">Tomas lindahl</a>
+                                                                    <h5 className="title"><a href="/#">Tomas
+                                                                        lindahl</a>
                                                                     </h5>
                                                                     <span>Bid listed</span>
                                                                 </div>
@@ -605,7 +626,8 @@ const NftSingle = () => {
                                                                     src="assets/img/others/heighest_avatar06.png"
                                                                     alt=""/></div>
                                                                 <div className="content">
-                                                                    <h5 className="title"><a href="/#">Tomas lindahl</a>
+                                                                    <h5 className="title"><a href="/#">Tomas
+                                                                        lindahl</a>
                                                                     </h5>
                                                                     <span>Bid listed</span>
                                                                 </div>
@@ -620,10 +642,12 @@ const NftSingle = () => {
                                                         <div className="bid-history-item">
                                                             <div className="highest-bid-avatar">
                                                                 <div className="thumb"><img
-                                                                    src="assets/img/others/heighest_avatar.png" alt=""/>
+                                                                    src="assets/img/others/heighest_avatar.png"
+                                                                    alt=""/>
                                                                 </div>
                                                                 <div className="content">
-                                                                    <h5 className="title"><a href="/#">Tomas lindahl</a>
+                                                                    <h5 className="title"><a href="/#">Tomas
+                                                                        lindahl</a>
                                                                     </h5>
                                                                     <span>Bid listed</span>
                                                                 </div>
