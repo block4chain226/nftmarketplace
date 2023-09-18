@@ -8,9 +8,6 @@ const ListingCollection = ({item}) => {
 
     return (
         <div className="main-content">
-            <Header/>
-            <main>
-                <Banner title="Listed Nfts"/>
                 <div className="col-xl-4 col-md-6 col-sm-6">
                     <div className="top-collection-item">
                         <div className="collection-item-top">
@@ -34,8 +31,6 @@ const ListingCollection = ({item}) => {
                         </div>
                         <div className="collection-item-thumb" style={{cursor: "pointer"}}>
                             <Link to={`/collection-items/${item.token}`}><img src={item.image} alt=""/></Link>
-
-
                         </div>
                         <div className="collection-item-content">
                             <h5 className="title"><a href="/market-single">{item.collectionName}</a> <span
@@ -52,8 +47,6 @@ const ListingCollection = ({item}) => {
                         </div>
                     </div>
                 </div>
-                <Footer/>
-            </main>
         </div>
     );
 };

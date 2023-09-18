@@ -101,7 +101,7 @@ const NftSingle = () => {
                                     <div className="market-single-title-wrap">
                                         <h2 className="title"></h2>
                                         <ul className="market-details-meta">
-                                            <li>Owned by <a href="/#">B14484</a></li>
+                                            <li>Owned by <a href="/#">{nft.seller}</a></li>
                                             <li className="wishlist">6 favorites</li>
                                         </ul>
                                     </div>

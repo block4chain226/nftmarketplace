@@ -109,11 +109,25 @@ const UseFetchFromDb = (account, func) => {
     }
 
     ///////////////////////////////////////////////////////////////////ListingsOffers
+    //TODO
     const getLastOfferPrice = async (listingId) => {
         const docRef = doc(db, "ListingsOffers", listingId);
         const listing = await getDoc(docRef);
         if (listing.exists()) {
             return listing.data().bestOffer;
+        } else {
+            return null;
+        }
+    }
+    //TODO
+    const getListingOffers = async (listingId) => {
+        const docRef = doc(db, "ListingsOffers", listingId);
+        let listing = await getDoc(docRef);
+        if (listing.exists()) {
+            listing = listing.data();
+            delete listing.bestOffer;
+            console.log(listing)
+            return listing;
         } else {
             return null;
         }
@@ -128,6 +142,7 @@ const UseFetchFromDb = (account, func) => {
         getAllCollectionListings: getAllCollectionListings,
         getListingByListingId: getListingByListingId,
         getLastOfferPrice: getLastOfferPrice,
+        getListingOffers: getListingOffers,
         getHash: getHash
     };
 };
