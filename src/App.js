@@ -72,8 +72,9 @@ function App() {
         </div>
     );
 }
-//TODO UsersOffers => account => listingId: { listingId, date, price } , maybe need to initialize date on frontEnd and send to all needed functions
-//TODO offerPeriod: date, endDate, then selling owner enter site, we get endDate from UsersOffers/bestOffer, if date.now >= endDate => cancelOffer, timer tick on site, when 0 => deleteOffer
+//TODO UsersOffers => account => listingId: { listingId, date, price } , maybe need to initialize date on frontEnd and send to all needed functions +
+//TODO offerPeriod: date, endDate, then selling owner enter site, we get endDate from UsersOffers/bestOffer, if date.now >= endDate => cancelOffer, timer tick on site, when 0 => deleteOffer, delete userOffer
 //TODO list modal with right ether parsing
+//TODO listingId+blocktimestamp => parse listingId-blocktimestamp
 
 export default App;

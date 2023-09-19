@@ -25,11 +25,6 @@ const CurrentCollectionItems = () => {
     }
 
     useEffect(() => {
-        if (accounts !== undefined)
-            console.log(accounts, contract)
-    }, [])
-
-    useEffect(() => {
         if (contract !== "") getCollectionItemsData(accounts, contract);
     }, [accounts])
 

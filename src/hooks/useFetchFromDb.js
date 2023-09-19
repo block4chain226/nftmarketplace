@@ -88,7 +88,6 @@ const UseFetchFromDb = (account, func) => {
     const getListingByListingId = async (listingId) => {
         const docRef = doc(db, "UsersListings", listingId);
         const listing = await getDoc(docRef);
-        console.log("=>(useFetchFromDb.js:97) listing", listing.data().listing);
         return listing.data();
     }
 
@@ -126,9 +125,9 @@ const UseFetchFromDb = (account, func) => {
         if (listing.exists()) {
             listing = listing.data();
             delete listing.bestOffer;
-            console.log(listing)
             return listing;
         } else {
+            console.log("null")
             return null;
         }
     }

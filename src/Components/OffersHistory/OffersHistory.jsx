@@ -1,18 +1,49 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import useFetchFromDb from "../../hooks/useFetchFromDb";
+import OffersItem from "./OffersItem";
+import useUserWriteToDb from "../../hooks/useUserWriteToDb";
+import AuthContext from "../../context/AuthContext";
 
-const OffersHistory = ({listingId, offerUpdate}) => {
+const OffersHistory = ({listingId, offerUpdate, timer}) => {
+    const {accounts} = useContext(AuthContext);
     const {getListingOffers} = useFetchFromDb();
     const [listingOffers, setListingOffers] = useState({});
-
-    useEffect(() => {
-        initial();
-        calculateHoursAgo();
-    }, [offerUpdate])
+    const [showTimer, setShowTimer] = useState(false);
+    const {deleteListingOffer, deleteUserOffer} = useUserWriteToDb();
 
     const initial = async () => {
-        const listingOffers = await getListingOffers(listingId);
-        setListingOffers(listingOffers);
+        try {
+            const listingOffers = await getListingOffers(listingId);
+            console.log(Object.keys(listingOffers).length)
+            console.log("=>(OffersHistory.jsx:15) listingOffers", listingOffers);
+            // let lalala;
+            // for (let listing in listingOffers) {
+            //
+            //     lalala = listing;
+            //     // if(new Date().getTime() >= listingOffers[listing].endDate){
+            //     //
+            //     // }
+            //
+            // }
+            // await deleteListingOffer(listingId, lalala, listingOffers);
+            listingOffers !== null ? setListingOffers(listingOffers) : setListingOffers(null);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    const del = async () => {
+        let lalala;
+        for (let listing in listingOffers) {
+
+            lalala = listing;
+            // if(new Date().getTime() >= listingOffers[listing].endDate){
+            //
+            // }
+
+        }
+        const offerId = await deleteListingOffer(listingId, lalala, listingOffers);
+        await deleteUserOffer(accounts.address, listingId, offerId);
     }
 
     const calculateHoursAgo = (date) => {
@@ -26,32 +57,30 @@ const OffersHistory = ({listingId, offerUpdate}) => {
         }
     }
 
+    useEffect(() => {
+        initial();
+        calculateHoursAgo();
+    }, [offerUpdate])
+
+    useEffect(() => {
+        if (timer) {
+            setShowTimer(true);
+        }
+    }, [])
+
     return (
         <div className="tab-content" id="myTabContent">
             <div className="tab-pane fade show active" id="bid" role="tabpanel"
                  aria-labelledby="bid-tab">
                 <div className="bid-history-overflow scroll">
                     <ul className="bid-history-list">
-                        {Object.entries(listingOffers).map(item => (
-                            <li>
-                                <div className="bid-history-item">
-                                    <div className="highest-bid-avatar">
-                                        <div className="thumb"><img
-                                            src="assets/img/others/heighest_avatar.png" alt=""/>
-                                        </div>
-                                        <div className="content">
-                                            <h5 className="title"><a href="/author-profile">{item[1].account}</a></h5>
-                                        </div>
-                                    </div>
-                                    <div className="bid-history-info">
-                                        <span>{calculateHoursAgo(item[1].date)}</span>
-                                        <h6 className="title">{item[1].price} Eth</h6>
-                                    </div>
-                                </div>
-                            </li>
-                        ))}
+                        {listingOffers !== null && Object.keys(listingOffers).length !== 0 ? Object.entries(listingOffers).map(item => (
+                            <OffersItem key={item[1].date} showTimer={showTimer} item={item[1]}
+                                        calculateHoursAgo={calculateHoursAgo}/>
+                        )) : <p>Token has no offers</p>}
                     </ul>
                 </div>
+                <button onClick={del}>delete</button>
             </div>
         </div>
     );

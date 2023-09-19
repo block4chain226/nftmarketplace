@@ -240,7 +240,7 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
             try {
                 await setDoc(contractDoc,
                     {
-                        [account.concat(new Date().getTime())]: {
+                        [account.concat(date)]: {
                             price: offerPrice,
                             account: account,
                             date: date,
@@ -270,10 +270,12 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
         if ((db && account && listingId && endDate && date && seller !== "" || undefined || null) && offerPrice && date && endDate > 0) {
             const UsersOffers = collection(db, 'UsersOffers');
             const contractDoc = doc(UsersOffers, account)
+            const Listings = collection(contractDoc, 'Listings');
+            const offersDoc = doc(Listings, listingId);
             try {
-                await setDoc(contractDoc,
+                await setDoc(offersDoc,
                     {
-                        [listingId]: {
+                        [account.concat(date)]: {
                             price: offerPrice,
                             account: account,
                             seller: seller,
@@ -289,7 +291,102 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
         } else {
             setError("listingId or account or price are empty");
         }
+        setLoading({loading: true});
+        setSuccess("success");
+    }
+    //TODO
+    const deleteUserOffer = async (account, listingId, offerId) => {
+        setLoading(true);
+        if (db && account && offerId !== undefined || "" || null) {
+            let arr = [];
+            const docRef = doc(db, "UsersOffers", account, "Listings", listingId);
+            const offers = (await getDoc(docRef)).data();
+            for (let key in offers) {
+                if (key === offerId) {
+                    delete offers[key];
+                } else {
+                    arr.push(offers[key]);
+                }
+            }
+            if (arr.length) {
+                try {
+                    await setDoc(docRef,
+                        {
+                            ...offers,
+                        });
+                } catch (error) {
+                    setError({error: "Error on saving contract"});
+                    console.log(":rocket: ~ file: index.js:17 ~ error:", error);
+                }
+            } else {
+                try {
+                    const ListingOffers = doc(db, "UsersOffers", account, "Listings", listingId);
+                    await deleteDoc(ListingOffers);
+                } catch (error) {
+                    setError({error: "Error on saving contract"});
+                    console.log(":rocket: ~ file: index.js:17 ~ error:", error);
+                }
+            }
+        } else {
+            setError("You didn't enter offerId");
+        }
+        setLoading({loading: true});
+        setSuccess("success");
+    }
+    //TODO
+    const deleteListingOffer = async (listingId, offerId, listingOffers) => {
+        setLoading(true);
+        if (db && listingId && offerId && listingOffers !== undefined || "" || null) {
+            let listingOffers1 = listingOffers;
+            let arr = [];
+            let offerToDelete;
+            for (let listing in listingOffers1) {
+                if (listing === offerId) {
+                    offerToDelete = listing;
+                    delete listingOffers1[listing];
+                } else {
+                    arr.push(listingOffers1[listing]);
+                }
+            }
+            if (arr.length) {
+                const sortedArr = arr.sort((a, b) => {
+                    return a.price - b.price
+                });
+                console.log("=>(useUserWriteToDb.js:339) sortedArr", sortedArr);
+                const account = sortedArr[sortedArr.length - 1].account;
+                const bestOffer = sortedArr[sortedArr.length - 1].price;
+                const endDate = sortedArr[sortedArr.length - 1].endDate;
+                const ListingsOffers = collection(db, 'ListingsOffers');
+                const contractDoc = doc(ListingsOffers, listingId)
+                try {
+                    await setDoc(contractDoc,
+                        {
+                            ...listingOffers1,
+                            bestOffer: {
+                                account: account,
+                                bestOffer: bestOffer,
+                                endDate: endDate,
+                            }
+                        });
 
+                } catch (error) {
+                    setError({error: "Error on saving contract"});
+                    console.log(":rocket: ~ file: index.js:17 ~ error:", error);
+                }
+                return offerToDelete;
+            } else {
+                try {
+                    const ListingsOffers = doc(db, 'ListingsOffers', listingId);
+                    await deleteDoc(ListingsOffers);
+                } catch (error) {
+                    setError({error: "Error on saving contract"});
+                    console.log(":rocket: ~ file: index.js:17 ~ error:", error);
+                }
+                return offerToDelete;
+            }
+        } else {
+            setError("You didn't enter listingId");
+        }
         setLoading({loading: true});
         setSuccess("success");
     }
@@ -303,6 +400,8 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
         unListTokenDB: unListTokenDB,
         writeListingOffer: writeListingOffer,
         writeUsersOffers: writeUsersOffers,
+        deleteListingOffer: deleteListingOffer,
+        deleteUserOffer: deleteUserOffer,
         success: success,
         loading: loading,
         error: error

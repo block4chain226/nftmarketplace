@@ -72,7 +72,7 @@ const MakeOfferModal = ({
                                 </div>
                                 <div className={cl.best_offer}>
                                     <span>Best offer</span>
-                                    <span>{bestOffer && ethers.formatEther(ethers.parseUnits(bestOffer.bestOffer.toString(), 18))}</span>
+                                    <span>{bestOffer && ethers.formatEther(ethers.parseUnits(bestOffer.bestOffer, 18))}</span>
                                 </div>
                             </div>
                             <div className={cl.input}>
