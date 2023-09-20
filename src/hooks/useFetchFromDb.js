@@ -132,6 +132,21 @@ const UseFetchFromDb = (account, func) => {
         }
     }
 
+    /////////////////////////////////////////////////////////////////////UsersOffers
+    //TODO
+    // const q = query(collection(db, "UsersContracts", account.address, "Contracts"), where("filter", "==", "all"));
+    const getAllUserOffers = async (account) => {
+        const docRef = doc(db, "UsersListingsIds", account);
+        let offers = await getDoc(docRef);
+        if (offers.exists()) {
+            offers = offers.data();
+            return offers;
+        } else {
+            console.log("null")
+            return null;
+        }
+    }
+
     return {
         contractExistsInDB: contractExistsInDB,
         getUserContractsList: getUserContractsList,
@@ -142,6 +157,7 @@ const UseFetchFromDb = (account, func) => {
         getListingByListingId: getListingByListingId,
         getLastOfferPrice: getLastOfferPrice,
         getListingOffers: getListingOffers,
+        getAllUserOffers: getAllUserOffers,
         getHash: getHash
     };
 };

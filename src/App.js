@@ -23,6 +23,7 @@ import SingleMarket from "./Components/InnerPages/marketsingle/SingleMarket";
 import NftMarket from "./Components/Explore/NftMarket";
 import NftSingle from "./Components/InnerPages/Portfolio/NftSingle";
 import CurrentCollectionItems from "./Components/InnerPages/Portfolio/CurrentCollectionItems";
+import OffersMade from "./Components/OffersMade/OffersMade";
 
 
 const clientId = "BH88U3rXLQxiX_zAoGEHCUaP0wBlxC82MB3yvnqDU-EDeKBoH60Y8Il-O8tMzQTGI5fSYTbwGtJEGb-O-NO_OI4";
@@ -62,6 +63,7 @@ function App() {
                         <Route path="/collection-items/:token" element={<CollectionItems/>}/>
                         <Route path="/single-market/:listingId" element={<SingleMarket/>}/>
                         <Route path="/nft-info/:tokenId/:contract" element={<NftSingle/>}/>
+                        <Route path="/offers-made/:account" element={<OffersMade/>}/>
                         {/*<Route path="/market-single" element={<MarketSingle/>}/>*/}
                         <Route path="/market-single/:tokenId" element={<MarketSingle/>}/>
                         <Route path="/nft-live-bidding" element={<NftLiveBidding/>}/>
@@ -72,9 +74,14 @@ function App() {
         </div>
     );
 }
+
 //TODO UsersOffers => account => listingId: { listingId, date, price } , maybe need to initialize date on frontEnd and send to all needed functions +
 //TODO offerPeriod: date, endDate, then selling owner enter site, we get endDate from UsersOffers/bestOffer, if date.now >= endDate => cancelOffer, timer tick on site, when 0 => deleteOffer, delete userOffer
+//TODO when you create new offer you need to add listingId to Offers db+, when delete listingId, delete this listingId from Offers to
+//TODO show all user offers on his page
+//TODO Users can cancel their offers
+//TODO owner of listing
+//TODO owner of listings can see all offers from all his listings in one list on the page
 //TODO list modal with right ether parsing
-//TODO listingId+blocktimestamp => parse listingId-blocktimestamp
 
 export default App;

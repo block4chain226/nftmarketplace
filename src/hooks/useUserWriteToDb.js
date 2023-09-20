@@ -322,6 +322,7 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
                 try {
                     const ListingOffers = doc(db, "UsersOffers", account, "Listings", listingId);
                     await deleteDoc(ListingOffers);
+                    await deleteUsersListingsIds(account, listingId);
                 } catch (error) {
                     setError({error: "Error on saving contract"});
                     console.log(":rocket: ~ file: index.js:17 ~ error:", error);
@@ -390,7 +391,60 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
         setLoading({loading: true});
         setSuccess("success");
     }
-
+    ///////////////////////////////////////////////////////////////////////////////UsersListingIds
+    //TODO
+    const writeUsersListingIds = async (account, listingId) => {
+        setLoading(true);
+        if (db && account && listingId !== "" || undefined || null) {
+            const UsersListingsIds = collection(db, 'UsersListingsIds');
+            const contractDoc = doc(UsersListingsIds, account)
+            try {
+                await setDoc(contractDoc,
+                    {
+                        [listingId]: listingId,
+                    }
+                    , {merge: true});
+            } catch (error) {
+                setError({error: "Error on saving contract"});
+                console.log(":rocket: ~ file: index.js:17 ~ error:", error);
+            }
+        } else {
+            setError("listingId or account or price are empty");
+        }
+        setLoading({loading: true});
+        setSuccess("success");
+    }
+    //TODO
+    const deleteUsersListingsIds = async (account, listingId) => {
+        setLoading(true);
+        if (db && account && listingId !== undefined || "" || null) {
+            let arr = [];
+            const docRef = collection(db, "UsersListingsIds");
+            const contractDoc = doc(docRef, account)
+            let listingIds = await getDoc(contractDoc);
+            listingIds = listingIds.data();
+            console.log(listingIds);
+            for (let listing in listingIds) {
+                if (listing === listingId) {
+                    delete listingIds[listing];
+                }
+            }
+            console.log(listingIds);
+            try {
+                await setDoc(contractDoc,
+                    {
+                        ...listingIds,
+                    });
+            } catch (error) {
+                setError({error: "Error on saving contract"});
+                console.log(":rocket: ~ file: index.js:17 ~ error:", error);
+            }
+        } else {
+            setError("You didn't enter offerId");
+        }
+        setLoading({loading: true});
+        setSuccess("success");
+    }
     return {
         writeUserContractDB: writeUserContractDB,
         writeUsersListedTokensDB: writeUsersListedTokensDB,
@@ -402,6 +456,8 @@ const useUserWriteToDb = (account, contract, params, useFetchFromDb, category, f
         writeUsersOffers: writeUsersOffers,
         deleteListingOffer: deleteListingOffer,
         deleteUserOffer: deleteUserOffer,
+        writeUsersListingIds: writeUsersListingIds,
+        deleteUsersListingsIds: deleteUsersListingsIds,
         success: success,
         loading: loading,
         error: error

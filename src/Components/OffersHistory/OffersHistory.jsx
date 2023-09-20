@@ -9,22 +9,19 @@ const OffersHistory = ({listingId, offerUpdate, timer}) => {
     const {getListingOffers} = useFetchFromDb();
     const [listingOffers, setListingOffers] = useState({});
     const [showTimer, setShowTimer] = useState(false);
-    const {deleteListingOffer, deleteUserOffer} = useUserWriteToDb();
+    const {deleteListingOffer, deleteUserOffer, writeUsersListingIds, deleteUsersListingsIds} = useUserWriteToDb();
 
     const initial = async () => {
         try {
             const listingOffers = await getListingOffers(listingId);
             console.log(Object.keys(listingOffers).length)
             console.log("=>(OffersHistory.jsx:15) listingOffers", listingOffers);
-            // let lalala;
-            // for (let listing in listingOffers) {
-            //
-            //     lalala = listing;
-            //     // if(new Date().getTime() >= listingOffers[listing].endDate){
-            //     //
-            //     // }
-            //
-            // }
+            for (let listing in listingOffers) {
+                if (new Date().getTime() >= listingOffers[listing].endDate) {
+                    const offerId = await deleteListingOffer(listingId, listing, listingOffers);
+                    await deleteUserOffer(accounts.address, listingId, offerId);
+                }
+            }
             // await deleteListingOffer(listingId, lalala, listingOffers);
             listingOffers !== null ? setListingOffers(listingOffers) : setListingOffers(null);
         } catch (err) {
@@ -33,13 +30,14 @@ const OffersHistory = ({listingId, offerUpdate, timer}) => {
     }
 
     const del = async () => {
+        // deleteUsersListingsIds(accounts.address, "0xBDf761788135C7d7Aa76E6671f63462A07C53E2C0xefaa045741317bc0386d048432557b5393a1993f1");
         let lalala;
         for (let listing in listingOffers) {
 
-            lalala = listing;
-            // if(new Date().getTime() >= listingOffers[listing].endDate){
-            //
-            // }
+        lalala = listing;
+        if(new Date().getTime() >= listingOffers[listing].endDate){
+
+        }
 
         }
         const offerId = await deleteListingOffer(listingId, lalala, listingOffers);
@@ -61,6 +59,10 @@ const OffersHistory = ({listingId, offerUpdate, timer}) => {
         initial();
         calculateHoursAgo();
     }, [offerUpdate])
+
+    useEffect(() => {
+        initial();
+    }, [])
 
     useEffect(() => {
         if (timer) {
